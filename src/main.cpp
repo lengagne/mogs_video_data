@@ -18,29 +18,27 @@ int main(int argc, char ** argv) {
     char key;
     // Image
      IplImage *image;
-    // Capture vidéo
-    CvCapture *capture;
  
-    if (argc != 2)
-    {
-	    std::cout<<"You must specify a video"<<std::endl;
-	    return 1;
-}
+	if (argc != 2)
+	{
+		std::cout<<"You must specify a video"<<std::endl;
+		return -1;
+	}
     
-    // Ouvrir le flux vidéo
-    capture = cvCreateFileCapture(argv[1]); // chemin pour un fichier
-//     capture = cvCreateCameraCapture(CV_CAP_ANY);
-    
-    
- 
+   	CvCapture  *capture = cvCaptureFromAVI( argv[1] );
     // Vérifier si l'ouverture du flux est ok
     if (!capture) {
  
-       printf("Ouverture du flux vidéo impossible !\n");
-       return 1;
+       std::cout<<"Ouverture du flux vidéo impossible !"<<std::endl;
+       return -1;
  
     }
- 
+	cvQueryFrame( capture );
+	int nFrames = (int) cvGetCaptureProperty( capture , CV_CAP_PROP_FRAME_COUNT);
+	std::cout<<"The video has "<< nFrames<<" frames."<<std::endl;
+	int fps = (int) cvGetCaptureProperty(capture, CV_CAP_PROP_FPS);
+	std::cout<<"The video has "<< fps<<" fps."<<std::endl;
+    
     // Définition de la fenêtre
     cvNamedWindow("GeckoGeek Window", CV_WINDOW_AUTOSIZE);
  
@@ -54,7 +52,7 @@ int main(int argc, char ** argv) {
        cvShowImage( "GeckoGeek Window", image);
  
        // On attend 10ms
-       key = cvWaitKey(10);
+       key = cvWaitKey(1000./fps);
  
     }
  
