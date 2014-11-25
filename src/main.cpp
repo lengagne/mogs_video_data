@@ -5,9 +5,15 @@
 #include <stdio.h>
 #include "highgui.h"
 #include "cv.h"
- 
+#include "TLD.h"
+#include "ImAcq.h"
+#include "Gui.h"
+
+
 int main() {
- 
+	tld::TLD * tld = new tld::TLD();
+	ImAcq *imAcq = imAcqAlloc();
+	
     // Touche clavier
     char key;
     // Image

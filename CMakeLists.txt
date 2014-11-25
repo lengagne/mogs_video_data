@@ -23,6 +23,10 @@ set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE})
 
 find_package( OpenCV REQUIRED )
 
+add_subdirectory(src/3rdparty/cvblobs)
+add_subdirectory(src/3rdparty/libconfig)
+add_subdirectory(src/libopentld)
+
 file(	GLOB_RECURSE
 	source_files_MOGS_VIDEO_DATA
 	src/*.cpp
@@ -34,11 +38,15 @@ configure_file ( "${PROJECT_SOURCE_DIR}/config_Video_data.h.in"
 		 "${PROJECT_SOURCE_DIR}/include/config_Video_data.h" )
 
 include_directories(	include
+# 			src/3rdparty/cvblobs
+# 			src/3rdparty/libconfig
+			src/libopentld/tld
+			src/libopentld/imacq
 			${OpenCV_INCLUDE_DIRS}
 			)
 
-# link_directories(
-# )
+link_directories(	${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE}
+)
 
 # ADD_LIBRARY(	MoGS_Video_Data SHARED 
 # 		${source_files_MOGS_VIDEO_DATA}
@@ -54,6 +62,9 @@ ADD_EXECUTABLE(	mogs_video_tracking
 target_link_libraries(	mogs_video_tracking
 # 			MoGS_Video_Data
 			${OpenCV_LIBS} 
+			libopentld
+			-lconfig++
+			-lcvblobs
 )
 
 
@@ -68,7 +79,7 @@ set(MoGS_Video_Data_FLAGS " " CACHE INTERNAL "")
 
 add_definitions(${MoGS_Video_Data_FLAGS})
 
-# SET(INSTALL_LIB_DIRS ${CMAKE_INSTALL_LIBDIR}/lib )
+SET(INSTALL_LIB_DIRS ${CMAKE_INSTALL_LIBDIR}/lib )
 
 install( TARGETS mogs_video_tracking RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin  COMPONENT main)
 
