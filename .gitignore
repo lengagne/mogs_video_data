@@ -1,4 +1,5 @@
 # Compiled Object files
+build
 *.slo
 *.lo
 *.o
@@ -26,3 +27,8 @@
 *.exe
 *.out
 *.app
+
+# temporary files
+*~
+
+

@@ -1,0 +1,16 @@
+# - Config file for the MoGS_Video_Data_Problem lib
+# It defines the following variables
+#
+# MoGS_Video_Data_INCLUDE_DIRS - include directories
+# MoGS_Video_Data_LIBRARY_DIRS - library directory (normally not used!)
+# MoGS_Video_Data_LIBRARIES - libraries to link against
+ 
+# Tell the user Video_Data where to find our headers and libraries
+
+SET(MoGS_Video_Data_INCLUDE_DIRS  @MoGS_Video_Data_INCLUDE_DIRS@)
+
+SET(MoGS_Video_Data_LIBRARY_DIRS @MoGS_Video_Data_LIBRARY_DIRS@)
+
+SET(MoGS_Video_Data_LIBRARIES @MoGS_Video_Data_LIBRARIES@)
+
+SET(MoGS_Video_Data_FLAGS @MoGS_Video_Data_FLAGS@)
