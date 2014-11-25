@@ -7,10 +7,10 @@
 #include "cv.h"
 #include "TLD.h"
 #include "ImAcq.h"
-#include "Gui.h"
 
 
-int main() {
+int main(int argc, char ** argv) {
+	
 	tld::TLD * tld = new tld::TLD();
 	ImAcq *imAcq = imAcqAlloc();
 	
@@ -21,9 +21,17 @@ int main() {
     // Capture vidéo
     CvCapture *capture;
  
+    if (argc != 2)
+    {
+	    std::cout<<"You must specify a video"<<std::endl;
+	    return 1;
+}
+    
     // Ouvrir le flux vidéo
-    //capture = cvCreateFileCapture("/path/to/your/video/test.avi"); // chemin pour un fichier
-    capture = cvCreateCameraCapture(CV_CAP_ANY);
+    capture = cvCreateFileCapture(argv[1]); // chemin pour un fichier
+//     capture = cvCreateCameraCapture(CV_CAP_ANY);
+    
+    
  
     // Vérifier si l'ouverture du flux est ok
     if (!capture) {
