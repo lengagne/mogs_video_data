@@ -8,6 +8,8 @@
 #include "TLD.h"
 #include "TLDUtil.h"
 
+#include "video_interface.h"
+
 using namespace tld;
 using namespace cv;
 
@@ -41,6 +43,8 @@ void PositionCurseur(int event, int x, int y, int flags, void* userdata){
 
 
 int main(int argc, char ** argv) {
+	
+	video_interface extract;
 	
 	tld::TLD * tld = new tld::TLD();
 // 	ImAcq *imAcq = imAcqAlloc();

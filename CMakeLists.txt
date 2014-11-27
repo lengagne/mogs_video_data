@@ -43,23 +43,21 @@ include_directories(	include
 link_directories(	${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE}
 )
 
-# ADD_LIBRARY(	MoGS_Video_Data SHARED 
-# 		${source_files_MOGS_VIDEO_DATA}
-# )
+ADD_LIBRARY(	MoGS_Video_Data SHARED 
+		${source_files_MOGS_VIDEO_DATA}
+)
 # 
-# target_link_libraries(MoGS_Video_Data
-# 
-# )
+target_link_libraries(MoGS_Video_Data
+			${OpenCV_LIBS} 
+			${OPENTLD_LIBS}
+			${CONFIGPP_LIBS}
+			${CVBLOBS_LIBS})
 
 ADD_EXECUTABLE(	mogs_video_tracking
 		"${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp")
 
 target_link_libraries(	mogs_video_tracking
-# 			MoGS_Video_Data
-			${OpenCV_LIBS} 
-			${OPENTLD_LIBS}
-			${CONFIGPP_LIBS}
-			${CVBLOBS_LIBS}
+			MoGS_Video_Data
 )
 
 
