@@ -20,8 +20,20 @@
 #ifndef __VIDEO_INTERFACE__
 #define __VIDEO_INTERFACE__
 
+#include <vector>
 #include <string>
 #include "additionnal_tinyxml.h"
+#include "config_Video_data.h"
+
+typedef struct
+{
+	std::string video_name;
+	std::string video_file;
+	int width;
+	int height;
+	int fps;
+	double duration;
+}video_description;
 
 class video_interface
 {
@@ -31,8 +43,27 @@ class video_interface
 	
 	/** Create a new project **/
 	void new_project(const std::string project_name);
+	
+	/** read a project and return false in case of trouble */
+	bool read(const std::string project_name);
+	
+	/** Show the details of a project **/
+	void show() const;
 private:
+	
+	/** Read the video description in the file */
+	void read_video_description(tinyxml2::XMLElement * El);
+		
+	/** read the xml project variables */	
 	tinyxml2::XMLDocument doc_;
+	/** main node of the xml file */
+	tinyxml2::XMLElement * root_;
+	
+	/** node for descriptions and data*/
+	tinyxml2::XMLElement * El_des_, *El_data_;
+	
+	/** processing variables	*/
+	std::vector<video_description> videos_;
 	
 };
 #endif

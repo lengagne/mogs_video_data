@@ -1,6 +1,14 @@
 <!ELEMENT project (Definitions,Datas)>
 
-<!ELEMENT Definitions (cameras*,points*)>
+<!ELEMENT Definitions (video*,point*)>
 
 <!ELEMENT Datas (data*)>
 
+<!ELEMENT video (video_name,video_file,width,height,fps,duration)>
+
+<!ELEMENT video_name (#PCDATA)>
+<!ELEMENT video_file (#PCDATA)>
+<!ELEMENT width (#PCDATA)>
+<!ELEMENT height (#PCDATA)>
+<!ELEMENT fps (#PCDATA)>
+<!ELEMENT duration (#PCDATA)>

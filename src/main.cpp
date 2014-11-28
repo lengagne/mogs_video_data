@@ -84,14 +84,15 @@ int main(int argc, char ** argv) {
 			// part for the auto completion
 			if (argc ==3)
 			{
-				std::cout<<"help new show"<<std::endl;
+				std::cout<<"help new project show"<<std::endl;
 			}else if( argc == 4)
 			{
 				std::string command1 = argv[2];
 				if (command1.compare("new")==0)
 				{
 					std::cout<<"Project_name"<<std::endl;
-				}else if (command1.compare("show")==0)
+				}else if (command1.compare("show")==0 ||
+					  command1.compare("project")==0)
 				{
 					// print the list of all the project files
 					struct dirent *dp;
@@ -109,6 +110,11 @@ int main(int argc, char ** argv) {
 					}
 					closedir(dir);
 				}
+			}else if( argc == 5)
+			{
+				std::string command1 = argv[2];
+				if (command1.compare("project")==0)
+					std::cout<<"add_video add_point"<<std::endl;
 			}
 			return 1;
 		}
@@ -121,17 +127,25 @@ int main(int argc, char ** argv) {
 			std::cout<<"Help of mogs_video_tracking"<<std::endl;
 			std::cout<<"\t mogs_video_tracking  new project_name : Create a new project."<<std::endl;
 			std::cout<<"\t mogs_video_tracking  show project_name : Show the details of a project."<<std::endl;
+			std::cout<<"\t mogs_video_tracking  project project_name add_vide video name: Add a video to the project."<<std::endl;
 			return 1;
 		}
 	}else if (argc == 3)
 	{
 		std::string command = argv[1];
 		std::string param = argv[2];
-		std::cout<<" command = "<< command <<std::endl;
-		std::cout<<" param = "<< param <<std::endl;
 		if (command.compare("new")==0)
 		{
 			project.new_project(param);
+		}else if (command.compare("show")==0)
+		{
+			// first we read the project
+			if (!project.read(param))
+			{
+				std::cerr<<"There is some mistake and reading the project "<<param<<std::endl;
+				return -1;
+			}
+			project.show();
 		}
 	}
 

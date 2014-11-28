@@ -4,6 +4,7 @@
 #define VERSION_MAJOR 
 #define VERSION_MINOR 
 
+#define DTD_REPOSITORY "/usr/local//share/MoGS/DTD"
 #define CONFIG_REPOSITORY "/usr/local//share/MoGS"
 
 #endif
