@@ -10,6 +10,13 @@
 
 #include "video_interface.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <dirent.h>
+# include <iostream>
+
+
 using namespace tld;
 using namespace cv;
 
@@ -41,6 +48,23 @@ void PositionCurseur(int event, int x, int y, int flags, void* userdata){
 	}
 }
 
+// char *path_cat (const char *str1, char *str2)
+//  {
+//     size_t str1_len = strlen(str1);
+//     size_t str2_len = strlen(str2);
+//     char *result;
+//     result = malloc ((str1_len+str2_len+1) *sizeof (*result));
+//     strcpy (result,str1);
+//     int i,j;
+//     for(i=str1_len , j=0; ((i<(str1_len+str2_len)) && (j<str2_len)); i++, j++)
+//         {
+//         result[i]=str2[j];
+//                  
+//     }
+//     result[str1_len+str2_len]='\0';
+//     return result;
+// }
+
 
 int main(int argc, char ** argv) {
 	
@@ -60,13 +84,30 @@ int main(int argc, char ** argv) {
 			// part for the auto completion
 			if (argc ==3)
 			{
-				std::cout<<"help new"<<std::endl;
+				std::cout<<"help new show"<<std::endl;
 			}else if( argc == 4)
 			{
 				std::string command1 = argv[2];
 				if (command1.compare("new")==0)
 				{
 					std::cout<<"Project_name"<<std::endl;
+				}else if (command1.compare("show")==0)
+				{
+					// print the list of all the project files
+					struct dirent *dp;
+					const char *dir_path="./";
+					DIR *dir = opendir(dir_path);
+					while ((dp=readdir(dir)) != NULL)
+					{
+						std::string tmp = dp->d_name;
+						if(strstr (tmp.c_str (), ".xml"))
+						{							
+							int lastindex = tmp.find_last_of("."); 
+							tmp = tmp.substr(0, lastindex); 
+							std::cout<<tmp<<" "<<std::endl;
+						}
+					}
+					closedir(dir);
 				}
 			}
 			return 1;
@@ -79,6 +120,7 @@ int main(int argc, char ** argv) {
 		{
 			std::cout<<"Help of mogs_video_tracking"<<std::endl;
 			std::cout<<"\t mogs_video_tracking  new project_name : Create a new project."<<std::endl;
+			std::cout<<"\t mogs_video_tracking  show project_name : Show the details of a project."<<std::endl;
 			return 1;
 		}
 	}else if (argc == 3)

@@ -31,9 +31,11 @@ video_interface::~video_interface()
 
 void video_interface::new_project(const std::string project_name)
 {
-	int dummy = system("mkdir videos");
+	// test if the file already exists.
+	std::string command = "mkdir videos_"+project_name;
+	int dummy = system(command.c_str());
 	int lastindex = project_name.find_last_of("."); 
 	std::string rawname = project_name.substr(0, lastindex); 
-	std::string command = "cp /usr/local/share/MoGS/templates/mogs_project_video_tracking.xml " + rawname +".xml";
+	command = "cp /usr/local/share/MoGS/templates/mogs_project_video_tracking.xml " + rawname +".xml";
 	dummy = system (command.c_str());
 }
