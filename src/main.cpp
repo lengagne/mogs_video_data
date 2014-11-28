@@ -44,7 +44,57 @@ void PositionCurseur(int event, int x, int y, int flags, void* userdata){
 
 int main(int argc, char ** argv) {
 	
-	video_interface extract;
+	video_interface project;
+	
+	if (argc == 1)
+	{
+		std::cerr<<"You can call mogs_video_tracking -h for more help"<<std::endl;
+		return 0;
+	}
+	
+	if (argc > 1)
+	{
+		std::string command = argv[1];
+		if (command.compare("-completion")==0)
+		{
+			// part for the auto completion
+			if (argc ==3)
+			{
+				std::cout<<"help new"<<std::endl;
+			}else if( argc == 4)
+			{
+				std::string command1 = argv[2];
+				if (command1.compare("new")==0)
+				{
+					std::cout<<"Project_name"<<std::endl;
+				}
+			}
+			return 1;
+		}
+	}
+	if (argc ==2)
+	{
+		std::string command = argv[1];
+		if (command.compare("help") == 0)
+		{
+			std::cout<<"Help of mogs_video_tracking"<<std::endl;
+			std::cout<<"\t mogs_video_tracking  new project_name : Create a new project."<<std::endl;
+			return 1;
+		}
+	}else if (argc == 3)
+	{
+		std::string command = argv[1];
+		std::string param = argv[2];
+		std::cout<<" command = "<< command <<std::endl;
+		std::cout<<" param = "<< param <<std::endl;
+		if (command.compare("new")==0)
+		{
+			project.new_project(param);
+		}
+	}
+
+	/*
+	
 	
 	tld::TLD * tld = new tld::TLD();
 // 	ImAcq *imAcq = imAcqAlloc();
@@ -232,7 +282,7 @@ int main(int argc, char ** argv) {
  
 	cvReleaseCapture(&capture);
 	cvDestroyWindow("GeckoGeek Window");
-	
+	*/
 	return 0;
  
 }

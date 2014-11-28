@@ -20,12 +20,19 @@
 #ifndef __VIDEO_INTERFACE__
 #define __VIDEO_INTERFACE__
 
+#include <string>
+#include "additionnal_tinyxml.h"
+
 class video_interface
 {
       public:
 	video_interface ();
 	~video_interface ();
+	
+	/** Create a new project **/
+	void new_project(const std::string project_name);
 private:
+	tinyxml2::XMLDocument doc_;
 	
 };
 #endif

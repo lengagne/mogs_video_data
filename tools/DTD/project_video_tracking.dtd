@@ -1,0 +1,6 @@
+<!ELEMENT project (Definitions,Datas)>
+
+<!ELEMENT Definitions (cameras*,points*)>
+
+<!ELEMENT Datas (data*)>
+

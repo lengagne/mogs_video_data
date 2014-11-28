@@ -25,6 +25,8 @@ class video_extractor
       public:
 	video_extractor ();
 	~video_extractor ();
+	
+	
 private:
 	
 };

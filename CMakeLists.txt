@@ -22,6 +22,7 @@ set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE})
 
 
 find_package( OpenCV REQUIRED )
+find_package( MoGS_Tinyxml REQUIRED )
 
 add_subdirectory(3rdparty)
 
@@ -38,25 +39,29 @@ configure_file ( "${PROJECT_SOURCE_DIR}/config_Video_data.h.in"
 include_directories(	include
 			3rdparty/tld
 			${OpenCV_INCLUDE_DIRS}
+			${MoGS_Tinyxml_INCLUDE_DIRS}
 			)
 
 link_directories(	${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE}
 )
 
 ADD_LIBRARY(	MoGS_Video_Data SHARED 
-		${source_files_MOGS_VIDEO_DATA}
+		${source_files_MOGS_VIDEO_DATA}		
 )
 # 
 target_link_libraries(MoGS_Video_Data
 			${OpenCV_LIBS} 
 			${OPENTLD_LIBS}
 			${CONFIGPP_LIBS}
-			${CVBLOBS_LIBS})
+			${CVBLOBS_LIBS}
+			${MoGS_Tinyxml_LIBRARIES})
+			
+link_directories(${MoGS_Tinyxml_LIBRARY_DIR})
 
-ADD_EXECUTABLE(	mogs_video_tracking
+ADD_EXECUTABLE(	MoGS_video_tracking
 		"${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp")
 
-target_link_libraries(	mogs_video_tracking
+target_link_libraries(	MoGS_video_tracking
 			MoGS_Video_Data
 )
 
@@ -74,7 +79,15 @@ add_definitions(${MoGS_Video_Data_FLAGS})
 
 SET(INSTALL_LIB_DIRS ${CMAKE_INSTALL_LIBDIR}/lib )
 
-install( TARGETS mogs_video_tracking RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin  COMPONENT main)
+install(DIRECTORY 	${CMAKE_CURRENT_SOURCE_DIR}/tools/DTD
+			${CMAKE_CURRENT_SOURCE_DIR}/tools/templates
+	DESTINATION 	${CMAKE_INSTALL_LIBDIR}/share/MoGS)
+
+install( TARGETS MoGS_video_tracking RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin  COMPONENT main)
+
+install( FILES "tools/mogs_video_completion.sh" DESTINATION /etc/bash_completion.d/)
+
+install( TARGETS MoGS_Video_Data LIBRARY DESTINATION ${INSTALL_LIB_DIRS}  COMPONENT main)
 
 	### Configure file
 configure_file(MoGS_Video_DataConfig.cmake.in "${PROJECT_BINARY_DIR}/MoGS_Video_DataConfig.cmake" @ONLY)
