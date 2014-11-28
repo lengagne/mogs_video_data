@@ -147,6 +147,10 @@ int main(int argc, char ** argv) {
 			}
 			project.show();
 		}
+	}else if (argc == 5)
+	{
+		for (int i = 0;i<argc;i++)
+			std::cout<<"argv["<<i<<"] = "<< argv[i]<<std::endl;
 	}
 
 	/*
