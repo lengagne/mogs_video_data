@@ -24,6 +24,8 @@
 #include <string>
 #include "additionnal_tinyxml.h"
 #include "config_Video_data.h"
+#include "highgui.h"
+#include "cv.h"
 
 typedef struct
 {
@@ -41,6 +43,10 @@ class video_interface
 	video_interface ();
 	~video_interface ();
 	
+	/** Add a video to the xml of the project*/
+	bool add_video_to_project(const std::string &file,
+				  const std::string &name);
+	
 	/** Create a new project **/
 	void new_project(const std::string project_name);
 	
@@ -50,9 +56,15 @@ class video_interface
 	/** Show the details of a project **/
 	void show() const;
 private:
+	std::string project_file_;
 	
 	/** Read the video description in the file */
 	void read_video_description(tinyxml2::XMLElement * El);
+	
+	/** Check if a video name is already defined 
+	 *	return false if the video does not exists
+	 */
+	bool video_exists(const std::string & name);
 		
 	/** read the xml project variables */	
 	tinyxml2::XMLDocument doc_;
@@ -61,6 +73,9 @@ private:
 	
 	/** node for descriptions and data*/
 	tinyxml2::XMLElement * El_des_, *El_data_;
+	
+	/** node for description of video and of point */
+	tinyxml2::XMLElement * El_videos_, *El_points_;
 	
 	/** processing variables	*/
 	std::vector<video_description> videos_;

@@ -3,8 +3,7 @@
  */
  
 #include <stdio.h>
-#include "highgui.h"
-#include "cv.h"
+
 #include "TLD.h"
 #include "TLDUtil.h"
 
@@ -76,6 +75,19 @@ int main(int argc, char ** argv) {
 		return 0;
 	}
 	
+	if (argc == 3)
+	{
+		std::string command = argv[1];
+		std::string param = argv[2];
+		if (command.compare("new")==0)
+		{
+			std::cout<<" command = "<< command <<std::endl;
+			std::cout<<" param = "<< param <<std::endl;
+			project.new_project(param);
+			return 1;
+		}	
+	}
+	
 	if (argc > 1)
 	{
 		std::string command = argv[1];
@@ -115,6 +127,14 @@ int main(int argc, char ** argv) {
 				std::string command1 = argv[2];
 				if (command1.compare("project")==0)
 					std::cout<<"add_video add_point"<<std::endl;
+			}else if( argc == 6)
+			{
+				std::string command3 = argv[4];
+				if (command3.compare("add_video")==0)
+					std::cout<<"file: avi|mov"<<std::endl;
+			}else if( argc == 7)
+			{
+				std::cout<<"name"<<std::endl;
 			}
 			return 1;
 		}
@@ -134,10 +154,7 @@ int main(int argc, char ** argv) {
 	{
 		std::string command = argv[1];
 		std::string param = argv[2];
-		if (command.compare("new")==0)
-		{
-			project.new_project(param);
-		}else if (command.compare("show")==0)
+		if (command.compare("show")==0)
 		{
 			// first we read the project
 			if (!project.read(param))
@@ -147,10 +164,33 @@ int main(int argc, char ** argv) {
 			}
 			project.show();
 		}
-	}else if (argc == 5)
+	}else if (argc == 6)
 	{
+		std::string command = argv[1];
+		if( command.compare("project")==0)
+		{
+			std::string param = argv[2];
+			if (!project.read(param))
+			{
+				std::cerr<<"There is some mistake and reading the project "<<param<<std::endl;
+				return -1;
+			}		
+			std::string command3 = argv[3];
+			if (command3.compare("add_video")==0)
+			{
+				std::string file = argv[4];
+				std::string name = argv[5];
+				if (!project.add_video_to_project(file, name))
+				{
+					std::cerr<<"Error cannot add the file : "<< file <<"."<<std::endl;
+				}
+			}
+		}
 		for (int i = 0;i<argc;i++)
 			std::cout<<"argv["<<i<<"] = "<< argv[i]<<std::endl;
+	}else
+	{
+		std::cerr<<"This sequence is not defined "<<std::endl;
 	}
 
 	/*

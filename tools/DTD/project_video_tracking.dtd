@@ -1,6 +1,9 @@
 <!ELEMENT project (Definitions,Datas)>
 
-<!ELEMENT Definitions (video*,point*)>
+<!ELEMENT Definitions (videos,points)>
+
+<!ELEMENT videos (video*)>
+<!ELEMENT points (point*)>
 
 <!ELEMENT Datas (data*)>
 
