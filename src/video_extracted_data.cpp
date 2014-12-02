@@ -19,7 +19,8 @@
 
 #include "video_extracted_data.h"
 
-video_extracted_data::video_extracted_data()
+video_extracted_data::video_extracted_data(int nb)
+nb_frames_(nb)
 {
 	
 }

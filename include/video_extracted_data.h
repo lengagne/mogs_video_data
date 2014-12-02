@@ -23,9 +23,11 @@
 class video_extracted_data
 {
       public:
-	video_extracted_data ();
+	video_extracted_data (int nb);
 	~video_extracted_data ();
 private:
+	
+	int nb_frames_;
 	
 };
 #endif
