@@ -29,6 +29,25 @@ video_interface::~video_interface()
 	
 }
 
+bool video_interface::add_point_to_project(const std::string &name)
+{
+	if (point_exists(name))
+	{
+		std::cerr<<"The point "<<name<<" already exists."<<std::endl;
+		exit(0);
+	}
+
+	// add the data to the xml
+	tinyxml2::XMLElement * point = doc_.NewElement ("point");
+	El_points_->InsertEndChild (point);
+	tinyxml2::XMLText * text = doc_.NewText (name.c_str ());
+	point->InsertEndChild (text);
+
+	doc_.SaveFile (project_file_.c_str());
+	
+	return true;
+}
+
 bool video_interface::add_video_to_project(const std::string &file,
 					   const std::string &name)
 {
@@ -93,29 +112,8 @@ bool video_interface::add_video_to_project(const std::string &file,
 	node->InsertEndChild (text);
 	video->InsertEndChild (node);
 	
-// 	video_name,video_file,width,height,fps,duration
-
 	doc_.SaveFile (project_file_.c_str());
-	
-// 	tinyxml2::XMLNode * ELname = doc_.NewElement ("name");
-// 	tinyxml2::XMLText * text = doc_.NewText (name.c_str ());
-// 	ELname->InsertEndChild (text);
-// 	environment->InsertEndChild (ELname);
-// 
-// 	tinyxml2::XMLNode * ELxml = doc_.NewElement ("xml_file");
-// 	std::string tmp_name = name;
-// 	std::string xml_in_project = "Environments/" + tmp_name + "/" + tmp_name + ".xml";
-// 	text = doc_.NewText (xml_in_project.c_str ());
-// 	ELxml->InsertEndChild (text);
-// 	environment->InsertEndChild (ELxml);
-// 
-// 	std::string cmd = "cd Environments;  mkdir " + name;
-// 	int dummy = system (cmd.c_str ());
-// 
-// 	cmd = "cp " + xml + " Environments/" + name + "/" + name + ".xml -v ";
-// 	dummy = system (cmd.c_str ());	
-	
-	
+
 	return true;
 }
 
@@ -133,6 +131,17 @@ void video_interface::new_project(const std::string project_name)
 	std::string rawname = project_name.substr(0, lastindex); 
 	command = "cp /usr/local/share/MoGS/templates/mogs_project_video_tracking.xml " + rawname +".xml";
 	dummy = system (command.c_str());
+}
+
+bool video_interface::point_exists(const std::string & name)
+{
+	int nb = points_.size();
+	for (int i=0;i<nb;i++)
+	{
+		if ( name == points_[i])
+			return true;
+	}
+	return false;
 }
 
 bool video_interface::read(const std::string project_name)
@@ -188,9 +197,11 @@ bool video_interface::read(const std::string project_name)
 		return false;
 	}
 	cpt = 0;
-	tinyxml2::XMLElement * El_point = El_des_->FirstChildElement ("point");
+	tinyxml2::XMLElement * El_point = El_points_->FirstChildElement ("point");
 	for (El_point; El_point; El_point = El_point->NextSiblingElement ("point"))
 	{
+		std::string tmp = char_to_string(El_point->GetText());
+		points_.push_back(tmp);
 		cpt++;
 	}
 	std::cout<<"there is/are "<<cpt<<" point(s)."<<std::endl;

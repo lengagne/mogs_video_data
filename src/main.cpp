@@ -71,7 +71,7 @@ int main(int argc, char ** argv) {
 	
 	if (argc == 1)
 	{
-		std::cerr<<"You can call mogs_video_tracking -h for more help"<<std::endl;
+		std::cerr<<"You can call mogs_video_tracking help for more help"<<std::endl;
 		return 0;
 	}
 	
@@ -132,6 +132,8 @@ int main(int argc, char ** argv) {
 				std::string command3 = argv[4];
 				if (command3.compare("add_video")==0)
 					std::cout<<"file: avi|mov"<<std::endl;
+				if (command3.compare("add_point")==0)
+					std::cout<<"point_name"<<std::endl;
 			}else if( argc == 7)
 			{
 				std::cout<<"name"<<std::endl;
@@ -150,7 +152,9 @@ int main(int argc, char ** argv) {
 			std::cout<<"\t mogs_video_tracking  project project_name add_vide video name: Add a video to the project."<<std::endl;
 			return 1;
 		}
-	}else if (argc == 3)
+	}
+		
+	if (argc == 3)
 	{
 		std::string command = argv[1];
 		std::string param = argv[2];
@@ -163,8 +167,10 @@ int main(int argc, char ** argv) {
 				return -1;
 			}
 			project.show();
+			return 1;
 		}
-	}else if (argc == 6)
+	}
+	
 	{
 		std::string command = argv[1];
 		if( command.compare("project")==0)
@@ -176,7 +182,7 @@ int main(int argc, char ** argv) {
 				return -1;
 			}		
 			std::string command3 = argv[3];
-			if (command3.compare("add_video")==0)
+			if (command3.compare("add_video")==0 && argc == 6)
 			{
 				std::string file = argv[4];
 				std::string name = argv[5];
@@ -184,14 +190,24 @@ int main(int argc, char ** argv) {
 				{
 					std::cerr<<"Error cannot add the file : "<< file <<"."<<std::endl;
 				}
+				return 1;
+			}else if (command3.compare("add_point")==0 && argc == 5)
+			{
+				std::string name = argv[4];
+				if (!project.add_point_to_project(name))
+				{
+					std::cerr<<"Error cannot add the point : "<< name <<"."<<std::endl;
+				}
+				return 1;
 			}
 		}
-		for (int i = 0;i<argc;i++)
-			std::cout<<"argv["<<i<<"] = "<< argv[i]<<std::endl;
-	}else
-	{
-		std::cerr<<"This sequence is not defined "<<std::endl;
+
 	}
+
+	// if not return before : there might be a trouble
+	std::cerr<<"This sequence is not defined "<<std::endl;
+	for (int i = 0;i<argc;i++)
+		std::cout<<"argv["<<i<<"] = "<< argv[i]<<std::endl;
 
 	/*
 	

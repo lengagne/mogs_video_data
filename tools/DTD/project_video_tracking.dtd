@@ -15,3 +15,5 @@
 <!ELEMENT height (#PCDATA)>
 <!ELEMENT fps (#PCDATA)>
 <!ELEMENT duration (#PCDATA)>
+
+<!ELEMENT point (#PCDATA)>

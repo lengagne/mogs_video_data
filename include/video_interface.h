@@ -42,6 +42,10 @@ class video_interface
       public:
 	video_interface ();
 	~video_interface ();
+
+	/** Add a point to the xml of the project*/
+	bool add_point_to_project(const std::string &name);
+
 	
 	/** Add a video to the xml of the project*/
 	bool add_video_to_project(const std::string &file,
@@ -57,6 +61,11 @@ class video_interface
 	void show() const;
 private:
 	std::string project_file_;
+
+	/** Check if a point name is already defined 
+	 *	return false if the video does not exists
+	 */
+	bool point_exists(const std::string & name);	
 	
 	/** Read the video description in the file */
 	void read_video_description(tinyxml2::XMLElement * El);
@@ -79,6 +88,8 @@ private:
 	
 	/** processing variables	*/
 	std::vector<video_description> videos_;
+	
+	std::vector<std::string> points_;
 	
 };
 #endif
