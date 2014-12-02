@@ -20,12 +20,10 @@
 #ifndef __VIDEO_INTERFACE__
 #define __VIDEO_INTERFACE__
 
-#include <vector>
-#include <string>
-#include "additionnal_tinyxml.h"
+
 #include "config_Video_data.h"
-#include "highgui.h"
-#include "cv.h"
+#include "video_extracted_data.h"
+#include "video_extractor.h"
 
 typedef struct
 {
@@ -34,6 +32,7 @@ typedef struct
 	int width;
 	int height;
 	int fps;
+	int nb_frames;
 	double duration;
 }video_description;
 
@@ -51,11 +50,18 @@ class video_interface
 	bool add_video_to_project(const std::string &file,
 				  const std::string &name);
 	
+	/** Edit the project file for point in video **/
+	void edit_data( const std::string &video,
+			const std::string &point);
+	
 	/** Create a new project **/
 	void new_project(const std::string project_name);
 	
 	/** read a project and return false in case of trouble */
 	bool read(const std::string project_name);
+	
+	/** Read the data  */
+	bool read_data( );
 	
 	/** Show the details of a project **/
 	void show() const;
@@ -67,6 +73,12 @@ class video_interface
 	void show_video_list() const;
 private:
 	std::string project_file_;
+
+	/** Get the id of the point **/
+	int get_point_id( const std::string & name) const;
+	
+	/** Get the id of the video **/
+	int get_video_id( const std::string & name) const;
 
 	/** Check if a point name is already defined 
 	 *	return false if the video does not exists
@@ -81,21 +93,27 @@ private:
 	 */
 	bool video_exists(const std::string & name);
 		
-	/** read the xml project variables */	
+	/** read the xml project variables */
 	tinyxml2::XMLDocument doc_;
+
 	/** main node of the xml file */
 	tinyxml2::XMLElement * root_;
-	
+
 	/** node for descriptions and data*/
-	tinyxml2::XMLElement * El_des_, *El_data_;
-	
+	tinyxml2::XMLElement * El_des_, *El_datas_;
+
 	/** node for description of video and of point */
 	tinyxml2::XMLElement * El_videos_, *El_points_;
-	
+
 	/** processing variables	*/
 	std::vector<video_description> videos_;
-	
+
 	std::vector<std::string> points_;
+
+	video_extracted_data *video_data_;
 	
+	video_extractor *extractor_;
+	
+	int nb_frames_;		// the minimal number of frames for all the videos
 };
 #endif

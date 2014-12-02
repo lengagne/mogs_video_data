@@ -218,6 +218,8 @@ int main(int argc, char ** argv) {
 			{
 				std::string video = argv[4];
 				std::string point = argv[5];
+// 				project.read_data();
+				project.edit_data( video, point);
 				std::cout<<" editing point "<< point <<" on video: "<< video<<std::endl;
 				return 1;
 			}

@@ -7,13 +7,24 @@
 
 <!ELEMENT Datas (data*)>
 
-<!ELEMENT video (video_name,video_file,width,height,fps,duration)>
+<!ELEMENT video (video_name,video_file,width,height,fps,nb_frames,duration)>
 
 <!ELEMENT video_name (#PCDATA)>
 <!ELEMENT video_file (#PCDATA)>
 <!ELEMENT width (#PCDATA)>
 <!ELEMENT height (#PCDATA)>
 <!ELEMENT fps (#PCDATA)>
+<!ELEMENT nb_frames (#PCDATA)>
 <!ELEMENT duration (#PCDATA)>
 
 <!ELEMENT point (#PCDATA)>
+
+<!ATTLIST data
+	frame CDATA #REQUIRED
+	video CDATA #REQUIRED
+	point CDATA #REQUIRED
+	version CDATA #REQUIRED
+	source (manual|tld) #REQUIRED
+	>
+
+<!ELEMENT data (#PCDATA)>

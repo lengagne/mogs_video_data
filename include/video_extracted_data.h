@@ -20,14 +20,62 @@
 #ifndef __VIDEO_EXTRACTED_DATA__
 #define __VIDEO_EXTRACTED_DATA__
 
+#include <vector>
+#include <string>
+#include <iostream>
+
+typedef struct
+{
+	int frame;
+	std::string video;
+	int video_id;
+	std::string point;
+	int point_id;
+	int version;
+	std::string source;
+	int value;
+}video_data;
+
+inline std::ostream & operator<< (std::ostream & output,
+					const video_data & in)
+{
+	output << "\tframe = " << in.frame << std::endl;
+	output << "\tvideo = " << in.video << std::endl;
+	output << "\tvideo_id = " << in.video_id << std::endl;
+	output << "\tpoint = " << in.point << std::endl;
+	output << "\tpoint_id = " << in.point_id << std::endl;
+	output << "\tversion = " << in.version << std::endl;
+	output << "\tsource = " << in.source << std::endl;
+	output << "\tvalue = " << in.value << std::endl;	
+	return output;
+}
+
 class video_extracted_data
 {
       public:
 	video_extracted_data (int nb);
+	
 	~video_extracted_data ();
+	
+	void add_data(const video_data& in);
+	
+	int get_next_version()const;
+	
+	int get_number_data() const
+	{
+		return datas_.size();
+	}
+	
+	
 private:
 	
-	int nb_frames_;
+	/** Test if the a is comparable and
+	 * updatable with b	*/
+	bool updatable( const video_data& a,
+			const video_data& b) const;
 	
+	std::vector<video_data> datas_;
+	
+	int nb_frames_;
 };
 #endif

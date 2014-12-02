@@ -21,7 +21,7 @@
 
 video_interface::video_interface()
 {
-	
+	nb_frames_ = 1e9;
 }
 
 video_interface::~video_interface()
@@ -71,6 +71,7 @@ bool video_interface::add_video_to_project(const std::string &file,
 	tmp.fps = (int) cvGetCaptureProperty(capture, CV_CAP_PROP_FPS);
 	std::cout<<"The video has "<< tmp.fps<<" fps."<<std::endl;
 	int nFrames = (int) cvGetCaptureProperty( capture , CV_CAP_PROP_FRAME_COUNT);
+	tmp.nb_frames = nFrames;
 	std::cout<<"The video has "<< nFrames<<" frames."<<std::endl;
 	tmp.duration = nFrames * 1.0 / tmp.fps;
 	
@@ -107,6 +108,11 @@ bool video_interface::add_video_to_project(const std::string &file,
 	node->InsertEndChild (text);
 	video->InsertEndChild (node);
 	
+	node = doc_.NewElement ("nb_frames");
+	text = doc_.NewText (std::to_string(tmp.nb_frames).c_str());
+	node->InsertEndChild (text);
+	video->InsertEndChild (node);
+	
 	node = doc_.NewElement ("duration");
 	text = doc_.NewText (std::to_string(tmp.duration).c_str());
 	node->InsertEndChild (text);
@@ -115,6 +121,36 @@ bool video_interface::add_video_to_project(const std::string &file,
 	doc_.SaveFile (project_file_.c_str());
 
 	return true;
+}
+
+void video_interface::edit_data( const std::string &video,
+				const std::string &point)
+{
+	read_data();
+	std::cout<<"edit_data "<< video<< " "<< point<<std::endl;
+	int id = get_video_id(video);
+	extractor_ = new video_extractor( videos_[id].video_file);
+	extractor_->set_data(video_data_);
+	int version = video_data_->get_next_version();
+	extractor_->edit_data(point,version);
+	//
+	extractor_->play();
+}
+
+int video_interface::get_point_id( const std::string & name) const
+{
+	int nb = points_.size();
+	for (int i=0;i<nb;i++)	if (name == points_[i])
+		return i;
+	return -1;
+}
+
+int video_interface::get_video_id( const std::string & name) const
+{
+	int nb = videos_.size();
+	for (int i=0;i<nb;i++)	if (name == videos_[i].video_name)
+		return i;
+	return -1;
 }
 
 void video_interface::new_project(const std::string project_name)
@@ -188,7 +224,7 @@ bool video_interface::read(const std::string project_name)
 		read_video_description(El_video);
 		cpt++;
 	}
-// 	std::cout<<"there is/are "<<cpt<<" camera(s)."<<std::endl;
+	std::cout<<"nb_frames = "<<nb_frames_<<std::endl;
 	
 	El_points_ = El_des_->FirstChildElement ("points");
 	if (!El_points_)
@@ -206,14 +242,38 @@ bool video_interface::read(const std::string project_name)
 	}
 // 	std::cout<<"there is/are "<<cpt<<" point(s)."<<std::endl;
 	
-	El_data_ = root_->FirstChildElement ("Datas");
-	if (!El_data_)
+	El_datas_ = root_->FirstChildElement ("Datas");
+	if (!El_datas_)
 	{
 		std::cerr << " Error cannot find the Datas" << std::endl;
 		return false;
 	}	
 	
 	return true;
+}
+
+bool video_interface::read_data( )
+{
+	video_data_ = new video_extracted_data(nb_frames_);
+	std::cout<<"video_interface::read_data()"<<std::endl;
+	int cpt = 0;
+	tinyxml2::XMLElement * El_data = El_datas_->FirstChildElement ("data");
+	for (El_data; El_data; El_data = El_data->NextSiblingElement ("data"))
+	{
+		video_data tmp;
+		tmp.frame = string_to_int(El_data->Attribute ("frame"));
+		tmp.video = El_data->Attribute ("video");
+		tmp.video_id = get_video_id(tmp.video);
+		tmp.point = El_data->Attribute ("point");
+		tmp.point_id = get_point_id(tmp.point);
+		tmp.version = string_to_int(El_data->Attribute ("version"));
+		tmp.source = El_data->Attribute ("source");
+		tmp.value = string_to_int(El_data->GetText());
+		video_data_->add_data(tmp);
+		cpt++;
+	}
+	std::cout<<"number of data = "<< cpt <<std::endl;
+	std::cout<<"number of data = "<< video_data_->get_number_data() <<std::endl;
 }
 
 void video_interface::read_video_description(tinyxml2::XMLElement * El)
@@ -259,6 +319,16 @@ void video_interface::read_video_description(tinyxml2::XMLElement * El)
 	}
 	tmp_video.fps = string_to_int(fps->GetText());
 	
+	tinyxml2::XMLElement * nb_frames = El->FirstChildElement ("nb_frames");
+	if (!nb_frames)
+	{
+		std::cerr << " Error cannot find the fps" << std::endl;
+		exit(0);
+	}
+	tmp_video.nb_frames = string_to_int(nb_frames->GetText());
+	if (nb_frames_ > tmp_video.nb_frames)
+		nb_frames_ = tmp_video.nb_frames;
+	
 	tinyxml2::XMLElement * duration = El->FirstChildElement ("duration");
 	if (!duration)
 	{
@@ -293,9 +363,7 @@ bool video_interface::video_exists(const std::string & name)
 {
 	int nb = videos_.size();
 	for (int i=0;i<nb;i++)
-	{
 		if ( name == videos_[i].video_name)
 			return true;
-	}
 	return false;
 }

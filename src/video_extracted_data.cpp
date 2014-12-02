@@ -20,7 +20,7 @@
 #include "video_extracted_data.h"
 
 video_extracted_data::video_extracted_data(int nb)
-nb_frames_(nb)
+: nb_frames_(nb)
 {
 	
 }
@@ -28,4 +28,48 @@ nb_frames_(nb)
 video_extracted_data::~video_extracted_data()
 {
 	
+}
+
+void video_extracted_data::add_data(const video_data& in)
+{
+	if (nb_frames_ > in.frame)
+	{
+		int nb = datas_.size();
+		// test if we update the value or add a new one
+		for (int i=0;i<nb;i++)
+			if (updatable(datas_[i],in))
+			{
+				datas_[i] = in;
+				return;
+			}
+		datas_.push_back(in);
+	}
+}
+
+int video_extracted_data::get_next_version()const
+{
+	int num = -1;
+	int nb = datas_.size();
+	// test if we update the value or add a new one
+	for (int i=0;i<nb;i++)
+		if (datas_[i].version > num )
+		{
+			num = datas_[i].version;
+		}
+		
+	return num+1;	
+}
+
+bool video_extracted_data::updatable( 	const video_data& a,
+					const video_data& b) const
+{
+	if (a.frame != b.frame)
+		return false;
+	if (a.video_id != b.video_id)
+		return false;
+	if (a.point_id != b.point_id)
+		return false;
+	if (a.version > b.version)
+		return false;
+	return true;
 }

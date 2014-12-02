@@ -17,17 +17,47 @@
 //      This program was developped in the following labs:
 //	from 2013 : Université Blaise Pascal / axis : ISPR / theme MACCS
 
-#ifndef __VIDEO_EXTRACTED_DATA__
-#define __VIDEO_EXTRACTED_DATA__
+#ifndef __VIDEO_EXTRACTOR__
+#define __VIDEO_EXTRACTOR__
+
+#include "video_extracted_data.h"
+#include "additionnal_tinyxml.h"
+// #include "TLD.h"
+// #include "TLDUtil.h"
+
+#include "highgui.h"
+#include "cv.h"
+
+typedef struct{
+	IplImage *image;
+	CvPoint* Pt1;
+	CvPoint* Pt2;
+	bool * rect_set;
+}data_mouse;
+
+void PositionCurseur(int event, int x, int y, int flags, void* userdata);
 
 class video_extractor
 {
       public:
-	video_extractor ();
+	video_extractor (const std::string& video_file);
 	~video_extractor ();
+	
+	void edit_data(const std::string& point,
+		       int version);
+	
+	void play( ) const;
+	
+	void set_data(video_extracted_data * in)
+	{
+		video_data_ = in;
+	}
 	
 	
 private:
+	std::string video_file_;
+	
+	video_extracted_data *video_data_;
 	
 };
 #endif
