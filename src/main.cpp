@@ -126,7 +126,7 @@ int main(int argc, char ** argv) {
 			{
 				std::string command1 = argv[2];
 				if (command1.compare("project")==0)
-					std::cout<<"add_video add_point"<<std::endl;
+					std::cout<<"add_video add_point edit_tracking"<<std::endl;
 			}else if( argc == 6)
 			{
 				std::string command3 = argv[4];
@@ -134,9 +134,22 @@ int main(int argc, char ** argv) {
 					std::cout<<"file: avi|mov"<<std::endl;
 				if (command3.compare("add_point")==0)
 					std::cout<<"point_name"<<std::endl;
+				if (command3.compare("edit_tracking")==0)
+				{
+					std::string param = argv[3];
+					if (project.read(param))
+						project.show_video_list();
+				}
 			}else if( argc == 7)
 			{
-				std::cout<<"name"<<std::endl;
+				std::string command3 = argv[4];
+				if (command3.compare("edit_tracking")==0)
+				{
+					std::string param = argv[3];
+					if (project.read(param))
+						project.show_point_list();
+				}else
+					std::cout<<"name"<<std::endl;
 			}
 			return 1;
 		}
@@ -149,7 +162,9 @@ int main(int argc, char ** argv) {
 			std::cout<<"Help of mogs_video_tracking"<<std::endl;
 			std::cout<<"\t mogs_video_tracking  new project_name : Create a new project."<<std::endl;
 			std::cout<<"\t mogs_video_tracking  show project_name : Show the details of a project."<<std::endl;
-			std::cout<<"\t mogs_video_tracking  project project_name add_vide video name: Add a video to the project."<<std::endl;
+			std::cout<<"\t mogs_video_tracking  project project_name add_video video_file video_name: Add a video to the project."<<std::endl;
+			std::cout<<"\t mogs_video_tracking  project project_name add_point point_name: Add a point to the project."<<std::endl;
+			std::cout<<"\t mogs_video_tracking  project project_name edit_tracking point_name video_name: Add a point to the project."<<std::endl;
 			return 1;
 		}
 	}
@@ -199,9 +214,14 @@ int main(int argc, char ** argv) {
 					std::cerr<<"Error cannot add the point : "<< name <<"."<<std::endl;
 				}
 				return 1;
+			}else if (command3.compare("edit_tracking")==0 && argc == 6)
+			{
+				std::string video = argv[4];
+				std::string point = argv[5];
+				std::cout<<" editing point "<< point <<" on video: "<< video<<std::endl;
+				return 1;
 			}
 		}
-
 	}
 
 	// if not return before : there might be a trouble

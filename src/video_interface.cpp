@@ -188,7 +188,7 @@ bool video_interface::read(const std::string project_name)
 		read_video_description(El_video);
 		cpt++;
 	}
-	std::cout<<"there is/are "<<cpt<<" camera(s)."<<std::endl;
+// 	std::cout<<"there is/are "<<cpt<<" camera(s)."<<std::endl;
 	
 	El_points_ = El_des_->FirstChildElement ("points");
 	if (!El_points_)
@@ -204,7 +204,7 @@ bool video_interface::read(const std::string project_name)
 		points_.push_back(tmp);
 		cpt++;
 	}
-	std::cout<<"there is/are "<<cpt<<" point(s)."<<std::endl;
+// 	std::cout<<"there is/are "<<cpt<<" point(s)."<<std::endl;
 	
 	El_data_ = root_->FirstChildElement ("Datas");
 	if (!El_data_)
@@ -271,7 +271,22 @@ void video_interface::read_video_description(tinyxml2::XMLElement * El)
 
 void video_interface::show() const
 {
-	
+	std::cout<<"Registered videos"<<std::endl;
+	show_video_list();
+}
+
+void video_interface::show_point_list() const
+{
+	int nb = points_.size();
+	for (int i=0;i<nb;i++)
+		std::cout<<"\t"<< points_[i] <<std::endl;	
+}
+
+void video_interface::show_video_list() const
+{
+	int nb = videos_.size();
+	for (int i=0;i<nb;i++)
+		std::cout<<"\t"<< videos_[i].video_name <<std::endl;
 }
 
 bool video_interface::video_exists(const std::string & name)

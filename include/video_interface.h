@@ -59,6 +59,12 @@ class video_interface
 	
 	/** Show the details of a project **/
 	void show() const;
+	
+	/** Show the list of the points **/
+	void show_point_list() const;
+	
+	/** Show the list of the videos **/
+	void show_video_list() const;
 private:
 	std::string project_file_;
 
