@@ -135,8 +135,6 @@ void video_interface::edit_data( const std::string &video,
 	int new_version = extractor_->edit_data(point);
 	// save the added_point
 	save_data(new_version);
-	//
-	extractor_->play();
 }
 
 int video_interface::get_point_id( const std::string & name) const
@@ -169,6 +167,15 @@ void video_interface::new_project(const std::string project_name)
 	std::string rawname = project_name.substr(0, lastindex); 
 	command = "cp /usr/local/share/MoGS/templates/mogs_project_video_tracking.xml " + rawname +".xml";
 	dummy = system (command.c_str());
+}
+
+void video_interface::play_video(const std::string &video )
+{
+	read_data();
+	int video_id = get_video_id(video);
+	extractor_ = new video_extractor(video,video_id, videos_[video_id].video_file);
+	extractor_->set_data(video_data_);
+	extractor_->play();	
 }
 
 bool video_interface::point_exists(const std::string & name)

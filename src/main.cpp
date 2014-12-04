@@ -43,24 +43,6 @@ void PositionCurseur(int event, int x, int y, int flags, void* userdata){
 	}
 }
 
-// char *path_cat (const char *str1, char *str2)
-//  {
-//     size_t str1_len = strlen(str1);
-//     size_t str2_len = strlen(str2);
-//     char *result;
-//     result = malloc ((str1_len+str2_len+1) *sizeof (*result));
-//     strcpy (result,str1);
-//     int i,j;
-//     for(i=str1_len , j=0; ((i<(str1_len+str2_len)) && (j<str2_len)); i++, j++)
-//         {
-//         result[i]=str2[j];
-//                  
-//     }
-//     result[str1_len+str2_len]='\0';
-//     return result;
-// }
-
-
 int main(int argc, char ** argv) {
 	
 	video_interface project;
@@ -122,7 +104,7 @@ int main(int argc, char ** argv) {
 			{
 				std::string command1 = argv[2];
 				if (command1.compare("project")==0)
-					std::cout<<"add_video add_point edit_tracking"<<std::endl;
+					std::cout<<"add_video add_point edit_tracking play"<<std::endl;
 			}else if( argc == 6)
 			{
 				std::string command3 = argv[4];
@@ -130,7 +112,7 @@ int main(int argc, char ** argv) {
 					std::cout<<"file: avi|mov"<<std::endl;
 				if (command3.compare("add_point")==0)
 					std::cout<<"point_name"<<std::endl;
-				if (command3.compare("edit_tracking")==0)
+				if (command3.compare("edit_tracking")==0 || command3.compare("play")==0)
 				{
 					std::string param = argv[3];
 					if (project.read(param))
@@ -160,7 +142,8 @@ int main(int argc, char ** argv) {
 			std::cout<<"\t mogs_video_tracking  show project_name : Show the details of a project."<<std::endl;
 			std::cout<<"\t mogs_video_tracking  project project_name add_video video_file video_name: Add a video to the project."<<std::endl;
 			std::cout<<"\t mogs_video_tracking  project project_name add_point point_name: Add a point to the project."<<std::endl;
-			std::cout<<"\t mogs_video_tracking  project project_name edit_tracking point_name video_name: Add a point to the project."<<std::endl;
+			std::cout<<"\t mogs_video_tracking  project project_name edit_tracking video_name point_name  Add a point to the project."<<std::endl;
+			std::cout<<"\t mogs_video_tracking  project project_name play video_name: Visualize one video."<<std::endl;
 			return 1;
 		}
 	}
@@ -217,6 +200,11 @@ int main(int argc, char ** argv) {
 // 				project.read_data();
 				project.edit_data( video, point);
 				std::cout<<" editing point "<< point <<" on video: "<< video<<std::endl;
+				return 1;
+			}else if (command3.compare("play")==0 && argc == 5)
+			{
+				std::string video = argv[4];
+				project.play_video( video);
 				return 1;
 			}
 		}

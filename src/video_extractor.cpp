@@ -24,6 +24,14 @@ using namespace cv;
 
 video_extractor::video_extractor (	const std::string & video,
 					int video_id,
+					const std::string& video_file)
+:video_(video),video_id_(video_id),point_("not_defined"),point_id_(-1), video_file_(video_file)
+{
+	
+}
+
+video_extractor::video_extractor (	const std::string & video,
+					int video_id,
 					const std::string & point,
 					int point_id,
 					const std::string& video_file)

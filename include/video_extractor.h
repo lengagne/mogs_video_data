@@ -41,9 +41,14 @@ class video_extractor
       public:
 	video_extractor (const std::string & video,
 			 int video_id,
+			 const std::string& video_file);
+	      
+	video_extractor (const std::string & video,
+			 int video_id,
 			 const std::string & point,
 			 int point_id,
 			 const std::string& video_file);
+	
 	~video_extractor ();
 	
 	/** Edit a new set of data and return the new version of this point */

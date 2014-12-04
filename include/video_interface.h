@@ -57,6 +57,9 @@ class video_interface
 	/** Create a new project **/
 	void new_project(const std::string project_name);
 	
+	/** Visualize the video **/
+	void play_video(const std::string &video);
+	
 	/** read a project and return false in case of trouble */
 	bool read(const std::string project_name);
 	
