@@ -126,7 +126,7 @@ int main(int argc, char ** argv) {
 					std::string param = argv[3];
 					if (project.read(param))
 						project.show_point_list();
-				}else
+				}else if (command3.compare("play")!=0 && command3.compare("add_point")!=0)
 					std::cout<<"name"<<std::endl;
 			}
 			return 1;
@@ -140,10 +140,10 @@ int main(int argc, char ** argv) {
 			std::cout<<"Help of mogs_video_tracking"<<std::endl;
 			std::cout<<"\t mogs_video_tracking  new project_name : Create a new project."<<std::endl;
 			std::cout<<"\t mogs_video_tracking  show project_name : Show the details of a project."<<std::endl;
-			std::cout<<"\t mogs_video_tracking  project project_name add_video video_file video_name: Add a video to the project."<<std::endl;
-			std::cout<<"\t mogs_video_tracking  project project_name add_point point_name: Add a point to the project."<<std::endl;
-			std::cout<<"\t mogs_video_tracking  project project_name edit_tracking video_name point_name  Add a point to the project."<<std::endl;
-			std::cout<<"\t mogs_video_tracking  project project_name play video_name: Visualize one video."<<std::endl;
+			std::cout<<"\t mogs_video_tracking  project 'project_name' add_video 'video_file' 'video_name': Add a video to the project."<<std::endl;
+			std::cout<<"\t mogs_video_tracking  project 'project_name' add_point 'point_name': Add a point to the project."<<std::endl;
+			std::cout<<"\t mogs_video_tracking  project 'project_name' edit_tracking 'video_name' 'point_name' :  Edit the point for the video."<<std::endl;
+			std::cout<<"\t mogs_video_tracking  project 'project_name' play video_name: Visualize one video."<<std::endl;
 			return 1;
 		}
 	}

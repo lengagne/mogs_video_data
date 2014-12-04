@@ -122,32 +122,48 @@ int video_extractor::edit_data(const std::string& point)
 		}
 		if (key == 't' && !tld_mode)
 		{
-			tld_mode = true;
-			// init the tld mode
-			 tld = new tld::TLD();
-			int initialBB[4];
-			std::cout<<"Pt1 = "<< Pt1.x<<" " << Pt1.y <<std::endl;
-			std::cout<<"Pt2 = "<< Pt2.x<<" " << Pt2.y <<std::endl;
-			initialBB[0] = Pt1.x;
-			initialBB[1] = Pt1.y;
-			initialBB[2] = Pt2.x - Pt1.x;
-			initialBB[3] = Pt2.y - Pt1.y;
-			
-			cv::Mat grey(image->height, image->width, CV_8UC1);
-			cvtColor(cv::cvarrToMat(image), grey, CV_BGR2GRAY);
+			if ( (Pt1.x - Pt2.x) < 5 && (Pt1.x - Pt2.x) > -5 && (Pt1.y - Pt2.y) < 5 && (Pt1.y - Pt2.y) > -5)
+			{
+				tld_mode = false;
+			}else
+			{
+				tld_mode = true;
+				// init the tld mode
+				tld = new tld::TLD();
+				int initialBB[4];
+				std::cout<<"Pt1 = "<< Pt1.x<<" " << Pt1.y <<std::endl;
+				std::cout<<"Pt2 = "<< Pt2.x<<" " << Pt2.y <<std::endl;
+				if (Pt1.x < Pt2.x){
+					initialBB[0] = Pt1.x;
+					initialBB[2] = Pt2.x - Pt1.x;
+				}
+				else {
+					initialBB[0] = Pt2.x;
+					initialBB[2] = Pt1.x - Pt2.x;
+				}
+				if (Pt1.y < Pt2.y){
+					initialBB[1] = Pt1.y;
+					initialBB[3] = Pt2.y - Pt1.y;
+				}
+				else{
+					initialBB[1] = Pt2.y;
+					initialBB[3] = Pt1.y - Pt2.y;
+				}
+				
+				cv::Mat grey(image->height, image->width, CV_8UC1);
+				cvtColor(cv::cvarrToMat(image), grey, CV_BGR2GRAY);
 
-			tld->detectorCascade->imgWidth = grey.cols;
-			tld->detectorCascade->imgHeight = grey.rows;
-			tld->detectorCascade->imgWidthStep = grey.step;
-			
-			Rect bb = tldArrayToRect(initialBB);
-			printf("Starting at %d %d %d %d\n", bb.x, bb.y, bb.width, bb.height);
-			tld->selectObject(grey, &bb);	
-			std::cout<<"after selectObject"<<std::endl;
+				tld->detectorCascade->imgWidth = grey.cols;
+				tld->detectorCascade->imgHeight = grey.rows;
+				tld->detectorCascade->imgWidthStep = grey.step;
+				
+				Rect bb = tldArrayToRect(initialBB);
+				printf("Starting at %d %d %d %d\n", bb.x, bb.y, bb.width, bb.height);
+				tld->selectObject(grey, &bb);
+			}
 		}
 		if (tld_mode)
 		{
-			std::cout<<"Before processImage "<<std::endl;
 			// continue the tld algo
 			tld->processImage(cvarrToMat(image));
 			if(tld->currBB != NULL)
@@ -180,7 +196,7 @@ int video_extractor::edit_data(const std::string& point)
 				tld_mode = false;
 				update_image = false;
 			}
-		}		
+		}	
 
 		if (rect_set && update_image)
 		{

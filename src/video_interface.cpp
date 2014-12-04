@@ -126,8 +126,11 @@ bool video_interface::add_video_to_project(const std::string &file,
 void video_interface::edit_data( const std::string &video,
 				const std::string &point)
 {
-	read_data();
+	std::cout<<"Push 'n' to see next frame "<<std::endl;
+	std::cout<<"Click on the image to select the point for "<< point<<"."<<std::endl;
+	std::cout<<"Draw a rectangle and push 't' in order to do automatic tracking."<<std::endl;
 	std::cout<<"edit_data "<< video<< " "<< point<<std::endl;
+	read_data();
 	int video_id = get_video_id(video);
 	int point_id = get_point_id(point);
 	extractor_ = new video_extractor(video,video_id,point,point_id, videos_[video_id].video_file);
