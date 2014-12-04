@@ -63,6 +63,9 @@ class video_interface
 	/** Read the data  */
 	bool read_data( );
 	
+	/** Save the new selected values **/
+	void save_data(int version);
+	
 	/** Show the details of a project **/
 	void show() const;
 	

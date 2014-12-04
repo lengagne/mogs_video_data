@@ -128,11 +128,13 @@ void video_interface::edit_data( const std::string &video,
 {
 	read_data();
 	std::cout<<"edit_data "<< video<< " "<< point<<std::endl;
-	int id = get_video_id(video);
-	extractor_ = new video_extractor( videos_[id].video_file);
+	int video_id = get_video_id(video);
+	int point_id = get_point_id(point);
+	extractor_ = new video_extractor(video,video_id,point,point_id, videos_[video_id].video_file);
 	extractor_->set_data(video_data_);
-	int version = video_data_->get_next_version();
-	extractor_->edit_data(point,version);
+	int new_version = extractor_->edit_data(point);
+	// save the added_point
+	save_data(new_version);
 	//
 	extractor_->play();
 }
@@ -224,7 +226,7 @@ bool video_interface::read(const std::string project_name)
 		read_video_description(El_video);
 		cpt++;
 	}
-	std::cout<<"nb_frames = "<<nb_frames_<<std::endl;
+// 	std::cout<<"nb_frames = "<<nb_frames_<<std::endl;
 	
 	El_points_ = El_des_->FirstChildElement ("points");
 	if (!El_points_)
@@ -268,7 +270,10 @@ bool video_interface::read_data( )
 		tmp.point_id = get_point_id(tmp.point);
 		tmp.version = string_to_int(El_data->Attribute ("version"));
 		tmp.source = El_data->Attribute ("source");
-		tmp.value = string_to_int(El_data->GetText());
+		std::string stmp = char_to_string (El_data->GetText ());
+		std::istringstream smallData (stmp, std::ios_base::in);
+		smallData >> tmp.value.x;
+		smallData >> tmp.value.y;
 		video_data_->add_data(tmp);
 		cpt++;
 	}
@@ -337,6 +342,66 @@ void video_interface::read_video_description(tinyxml2::XMLElement * El)
 	}
 	tmp_video.duration = string_to_double(duration->GetText());
 	videos_.push_back(tmp_video);
+}
+
+void video_interface::save_data(int version)
+{
+	std::vector<video_data> new_data;
+	video_data_->get_new_version_data(version,new_data);
+	int nb= new_data.size();
+	for (int i=0;i<nb;i++)
+	{
+		// add the data to the xml
+		tinyxml2::XMLElement * data = doc_.NewElement ("data");
+		El_datas_->InsertEndChild (data);
+		
+// 		tmp.video_id = get_video_id(tmp.video);
+// 		tmp.point = El_data->Attribute ("point");
+// 		tmp.point_id = get_point_id(tmp.point);
+// 		tmp.version = string_to_int(El_data->Attribute ("version"));
+// 		tmp.source = El_data->Attribute ("source");
+// 		std::string stmp = char_to_string (El_data->GetText ());
+// 		std::istringstream smallData (stmp, std::ios_base::in);
+// 		smallData >> tmp.value.x;
+// 		smallData >> tmp.value.y;
+		
+		data->SetAttribute("frame",new_data[i].frame);
+		data->SetAttribute("video",new_data[i].video.c_str());
+// 		data->SetAttribute("video_id",new_data[i].video_id);
+		data->SetAttribute("point",new_data[i].point.c_str());
+// 		data->SetAttribute("point_id",new_data[i].point_id);
+		data->SetAttribute("version",new_data[i].version);
+		data->SetAttribute("source",new_data[i].source.c_str());
+		std::string tmp = double_to_string(new_data[i].value.x)+ " " + double_to_string(new_data[i].value.y);
+		tinyxml2::XMLText * text = doc_.NewText (tmp.c_str ());
+		data->InsertEndChild (text);
+
+		
+// 		node->InsertEndChild (text);
+// 		data->InsertEndChild (node);
+// 
+// 		node = doc_.NewElement ("video");
+// 		text = doc_.NewText (new_data[i].video.c_str ());
+// 		node->InsertEndChild (text);
+// 		data->InsertEndChild (node);
+// 		
+// 		node = doc_.NewElement ("video");
+// 		text = doc_.NewText (new_data[i].video.c_str ());
+// 		node->InsertEndChild (text);
+// 		data->InsertEndChild (node);
+// typedef struct
+// {
+// 	int frame;
+// 	std::string video;
+// 	int video_id;
+// 	std::string point;
+// 	int point_id;
+// 	int version;
+// 	std::string source;
+// 	CvPoint value;
+// }video_data;
+	}
+	doc_.SaveFile (project_file_.c_str());
 }
 
 void video_interface::show() const

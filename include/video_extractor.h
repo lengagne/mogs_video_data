@@ -25,8 +25,7 @@
 // #include "TLD.h"
 // #include "TLDUtil.h"
 
-#include "highgui.h"
-#include "cv.h"
+
 
 typedef struct{
 	IplImage *image;
@@ -40,11 +39,15 @@ void PositionCurseur(int event, int x, int y, int flags, void* userdata);
 class video_extractor
 {
       public:
-	video_extractor (const std::string& video_file);
+	video_extractor (const std::string & video,
+			 int video_id,
+			 const std::string & point,
+			 int point_id,
+			 const std::string& video_file);
 	~video_extractor ();
 	
-	void edit_data(const std::string& point,
-		       int version);
+	/** Edit a new set of data and return the new version of this point */
+	int edit_data(const std::string& point);
 	
 	void play( ) const;
 	
@@ -55,6 +58,12 @@ class video_extractor
 	
 	
 private:
+	std::string point_;
+	int point_id_;
+	
+	std::string video_;
+	int video_id_;
+	
 	std::string video_file_;
 	
 	video_extracted_data *video_data_;

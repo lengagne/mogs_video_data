@@ -23,6 +23,8 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include "highgui.h"
+#include "cv.h"
 
 typedef struct
 {
@@ -33,7 +35,7 @@ typedef struct
 	int point_id;
 	int version;
 	std::string source;
-	int value;
+	CvPoint value;
 }video_data;
 
 inline std::ostream & operator<< (std::ostream & output,
@@ -46,7 +48,7 @@ inline std::ostream & operator<< (std::ostream & output,
 	output << "\tpoint_id = " << in.point_id << std::endl;
 	output << "\tversion = " << in.version << std::endl;
 	output << "\tsource = " << in.source << std::endl;
-	output << "\tvalue = " << in.value << std::endl;	
+	output << "\tvalue = " << in.value.x<<" : "<< in.value.y << std::endl;	
 	return output;
 }
 
@@ -61,11 +63,20 @@ class video_extracted_data
 	
 	int get_next_version()const;
 	
+	void get_new_version_data(int version,
+				  std::vector<video_data> & datas) const;
+	
 	int get_number_data() const
 	{
 		return datas_.size();
 	}
 	
+	int get_number_of_point() const;
+	
+	bool get_value ( int frame,
+			 int video_id,
+			 int point_id,
+			 CvPoint & val) const;
 	
 private:
 	

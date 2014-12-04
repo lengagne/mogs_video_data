@@ -60,6 +60,48 @@ int video_extracted_data::get_next_version()const
 	return num+1;	
 }
 
+void video_extracted_data::get_new_version_data(int version,
+						std::vector<video_data> & datas) const
+{
+	int nb = datas_.size();
+	for (int i=0;i<nb;i++)
+		if(datas_[i].version == version)
+			datas.push_back(datas_[i]);
+}
+
+int video_extracted_data::get_number_of_point() const
+{
+	int nb_point= 0 ;
+	int nb = datas_.size();
+	for (int i=0;i<nb;i++)
+		if(datas_[i].point_id >nb_point)
+			nb_point = datas_[i].point_id;
+	return nb_point+1;
+}
+
+bool video_extracted_data::get_value ( 	int frame,
+					int video_id,
+					int point_id,
+					CvPoint & val) const
+{
+	int version = -1;
+	int nb = datas_.size();
+	for (int i=0;i<nb;i++)
+	{
+		if ( datas_[i].frame == frame
+			&& datas_[i].video_id == video_id
+			&& datas_[i].point_id == point_id
+			&& datas_[i].version > version)
+		{
+			version = datas_[i].version;
+			val = datas_[i].value;
+		}
+	}
+	if (version ==-1)
+		return false;
+	return true;
+}
+
 bool video_extracted_data::updatable( 	const video_data& a,
 					const video_data& b) const
 {
