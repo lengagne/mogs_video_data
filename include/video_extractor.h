@@ -22,8 +22,8 @@
 
 #include "video_extracted_data.h"
 #include "additionnal_tinyxml.h"
-// #include "TLD.h"
-// #include "TLDUtil.h"
+#include "TLD.h"
+#include "TLDUtil.h"
 
 
 
@@ -67,6 +67,9 @@ private:
 	std::string video_file_;
 	
 	video_extracted_data *video_data_;
+	
+	/** Variables for the tld algorithms **/
+	tld::TLD * tld ;
 	
 };
 #endif

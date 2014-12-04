@@ -3,10 +3,6 @@
  */
  
 #include <stdio.h>
-
-#include "TLD.h"
-#include "TLDUtil.h"
-
 #include "video_interface.h"
 
 #include <stdio.h>

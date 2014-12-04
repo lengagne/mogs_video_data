@@ -19,6 +19,7 @@
 
 #include "video_extractor.h"
 
+using namespace tld;
 using namespace cv;
 
 video_extractor::video_extractor (	const std::string & video,
@@ -50,7 +51,7 @@ int video_extractor::edit_data(const std::string& point)
 	int nFrames = (int) cvGetCaptureProperty( capture , CV_CAP_PROP_FRAME_COUNT);
 	int fps = (int) cvGetCaptureProperty(capture, CV_CAP_PROP_FPS);
 	
-	CvPoint Pt1,Pt2;	
+	CvPoint Pt1,Pt2,center;	
 	bool rect_set;
 	rect_set = false;
 	data_mouse d;
@@ -69,21 +70,36 @@ int video_extractor::edit_data(const std::string& point)
 	char key;
 	int cpt = 0;
 	CvPoint visu_point;
-	int version = video_data_->get_next_version();	
+	int version = video_data_->get_next_version();
+	bool tld_mode = false;
+	bool update_image = false;
 	do {
-		image = cvQueryFrame(capture);
+		if (update_image)
+			image = cvQueryFrame(capture);
 		// plot last point version
-
+		update_image = true;
+		IplImage * image2 = cvCloneImage(image);
 		key = 0;
-		while (key != 'n' && key != 'q' && key != 'Q')
+		if (!tld_mode)	while (key != 'n' && key != 'q' && key != 'Q' && key != 't')
 		{
-			std::string tmp = "frame " +double_to_string(cpt) + "/" + double_to_string(nFrames) ;
 			IplImage * image2 = cvCloneImage(image);
+			std::string tmp = "frame " +double_to_string(cpt) + "/" + double_to_string(nFrames) ;			
 			if (rect_set)
 			{
-				tmp = tmp +" selected point: " + double_to_string(Pt1.x) + " : " + double_to_string(Pt1.y);
-				cvLine(image2, cvPoint(Pt1.x-2, Pt1.y), cvPoint(Pt1.x+2, Pt1.y), cvScalar(255,255,255), 2);
-				cvLine(image2, cvPoint(Pt1.x, Pt1.y+2), cvPoint(Pt1.x, Pt1.y-2), cvScalar(255,255,255), 2);
+				if ( (Pt1.x - Pt2.x) > 5 || (Pt1.x - Pt2.x) < -5 || (Pt1.y - Pt2.y) > 5 || (Pt1.y - Pt2.y) < -5)
+				{
+					tmp = tmp +" selected rectangle center : " + double_to_string(Pt1.x) + " : " + double_to_string(Pt1.y);
+					center.x = (Pt1.x + Pt2.x )/2;
+					center.y = (Pt1.y + Pt2.y )/2;
+					cvRectangle(image2, Pt1, Pt2, CV_RGB(255, 255, 255), 1);
+				}else
+				{
+					center = Pt1;
+					tmp = tmp +" selected point: " + double_to_string(Pt1.x) + " : " + double_to_string(Pt1.y);
+				}
+				cvLine(image2, cvPoint(center.x-2, center.y), cvPoint(center.x+2, center.y), cvScalar(255,255,255), 2);
+				cvLine(image2, cvPoint(center.x, center.y+2), cvPoint(center.x, center.y-2), cvScalar(255,255,255), 2);
+				
 			}else
 			{
 				if (video_data_->get_value(cpt,video_id_, point_id_,visu_point))
@@ -93,10 +109,72 @@ int video_extractor::edit_data(const std::string& point)
 				}					
 			}
 			cvPutText(image2, tmp.c_str(), cvPoint(25, 25), &font, white);
-			cvShowImage( "MoGS_video_tracking", image2);	
-			key = cvWaitKey(1000./fps);	
+			cvShowImage( "MoGS_video_tracking", image2);
+			key = cvWaitKey(1000./fps);
 		}
-		if (rect_set)
+		if (key == 't' && !tld_mode)
+		{
+			tld_mode = true;
+			// init the tld mode
+			 tld = new tld::TLD();
+			int initialBB[4];
+			std::cout<<"Pt1 = "<< Pt1.x<<" " << Pt1.y <<std::endl;
+			std::cout<<"Pt2 = "<< Pt2.x<<" " << Pt2.y <<std::endl;
+			initialBB[0] = Pt1.x;
+			initialBB[1] = Pt1.y;
+			initialBB[2] = Pt2.x - Pt1.x;
+			initialBB[3] = Pt2.y - Pt1.y;
+			
+			cv::Mat grey(image->height, image->width, CV_8UC1);
+			cvtColor(cv::cvarrToMat(image), grey, CV_BGR2GRAY);
+
+			tld->detectorCascade->imgWidth = grey.cols;
+			tld->detectorCascade->imgHeight = grey.rows;
+			tld->detectorCascade->imgWidthStep = grey.step;
+			
+			Rect bb = tldArrayToRect(initialBB);
+			printf("Starting at %d %d %d %d\n", bb.x, bb.y, bb.width, bb.height);
+			tld->selectObject(grey, &bb);	
+			std::cout<<"after selectObject"<<std::endl;
+		}
+		if (tld_mode)
+		{
+			std::cout<<"Before processImage "<<std::endl;
+			// continue the tld algo
+			tld->processImage(cvarrToMat(image));
+			if(tld->currBB != NULL)
+			{
+				printf("%.2d %.2d %.2d %.2d %f\n", tld->currBB->x, tld->currBB->y, tld->currBB->width, tld->currBB->height, tld->currConf);
+			}
+			else
+			{
+				printf("NaN NaN NaN NaN NaN\n");
+			}	
+			double threshold = 0.5;
+			if(tld->currConf >= threshold)
+			{
+				CvScalar blue = CV_RGB(0, 0, 255);
+				CvScalar black = CV_RGB(0, 0, 0);
+				CvScalar white = CV_RGB(255, 255, 255);
+
+				if(tld->currBB != NULL)
+				{
+					cvRectangle(image2, tld->currBB->tl(), tld->currBB->br(), blue, 8, 8, 0);
+					center = cvPoint(tld->currBB->x+tld->currBB->width/2, tld->currBB->y+tld->currBB->height/2);
+					cvLine(image2, cvPoint(center.x-2, center.y-2), cvPoint(center.x+2, center.y+2), blue, 2);
+					cvLine(image2, cvPoint(center.x-2, center.y+2), cvPoint(center.x+2, center.y-2), blue, 2);
+					rect_set = true;
+				}	
+				cvShowImage( "MoGS_video_tracking", image2);
+				key = cvWaitKey(1000./fps);
+			}else
+			{
+				tld_mode = false;
+				update_image = false;
+			}
+		}		
+
+		if (rect_set && update_image)
 		{
 			// add the point !!
 			video_data tmp;
@@ -106,12 +184,16 @@ int video_extractor::edit_data(const std::string& point)
 			tmp.point = point_;
 			tmp.point_id = point_id_;
 			tmp.version = version;
-			tmp.source = "manual";
-			tmp.value = Pt1;
+			if (tld_mode)
+				tmp.source = "tld";
+			else
+				tmp.source = "manual";
+			tmp.value = center;
 			video_data_->add_data(tmp);
 		}		
 		rect_set = false;
-		cpt++;
+		if (update_image)
+			cpt++;
 	} while(key != 'q' && key != 'Q' && cpt < nFrames);
 	cvReleaseCapture(&capture);
 	cvDestroyWindow("MoGS_video_tracking");
@@ -147,15 +229,8 @@ void video_extractor::play() const
 				cvLine(image, cvPoint(visu_point.x-2, visu_point.y), cvPoint(visu_point.x+2, visu_point.y), cvScalar(255,255,255), 2);
 				cvLine(image, cvPoint(visu_point.x, visu_point.y+2), cvPoint(visu_point.x, visu_point.y-2), cvScalar(255,255,255), 2);
 			}
-				
-		
-// 		CvScalar black = CV_RGB(0, 0, 0);
-// 		CvScalar white = CV_RGB(255, 255, 255);
-// 		CvFont font;
-// 		cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX, .5, .5, 0, 1, 8);
-// // 		cvRectangle(image, cvPoint(0, 0), cvPoint(image->width, 5), black, CV_FILLED, 8, 0);
-// 		cvPutText(image, "toto", cvPoint(25, 25), &font, white);
-		cvShowImage( "MoGS_video_tracking", image);	
+
+		cvShowImage( "MoGS_video_tracking", image);
 		key = cvWaitKey(1000./fps);
 	} 
 	cvReleaseCapture(&capture);
@@ -168,14 +243,18 @@ void video_extractor::play() const
 void PositionCurseur(int event, int x, int y, int flags, void* userdata){
 	data_mouse *d= (data_mouse*) userdata;
 /*****************************création rectangle**************************************************/
-	if(event == EVENT_LBUTTONDOWN){
-		d->Pt1->x=x;
-		d->Pt1->y=y;
+	switch(event)
+	{
+		case(EVENT_LBUTTONDOWN):
+			d->Pt1->x=x;
+			d->Pt1->y=y;
+			break;
+		case(EVENT_LBUTTONUP):
+			std::cout << ""<<x<<""<<y<<"" << std::endl;
+			d->Pt2->x=x;
+			d->Pt2->y=y;
+			*(d->rect_set) = true;
+			break;
 	}
-	if(event == EVENT_LBUTTONUP){
-		std::cout << ""<<x<<""<<y<<"" << std::endl;
-		d->Pt2->x=x;
-		d->Pt2->y=y;
-		*(d->rect_set) = true;
-	}
+
 }

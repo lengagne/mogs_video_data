@@ -1,4 +1,7 @@
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wall  ")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse2")
+
 include_directories(imacq
     ../mftracker
     .
@@ -14,12 +17,16 @@ file(	GLOB_RECURSE
 	*.h
 )
 
-add_library(opentld
+add_library(opentld SHARED
 		${source_files_libopentld}
 )
 
-target_link_libraries(opentld ${OpenCV_LIBS})
+target_link_libraries(	opentld 
+			${OpenCV_LIBS})
 
 # set_target_properties(libopentld PROPERTIES OUTPUT_NAME opentld)
 
 SET(OPENTLD_LIBS "opentld" CACHE INTERNAL "" )
+
+SET(INSTALL_LIB_DIRS ${CMAKE_INSTALL_LIBDIR}/lib )
+install( TARGETS opentld LIBRARY DESTINATION ${INSTALL_LIB_DIRS}  COMPONENT main)

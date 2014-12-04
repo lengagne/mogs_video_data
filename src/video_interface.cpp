@@ -354,52 +354,14 @@ void video_interface::save_data(int version)
 		// add the data to the xml
 		tinyxml2::XMLElement * data = doc_.NewElement ("data");
 		El_datas_->InsertEndChild (data);
-		
-// 		tmp.video_id = get_video_id(tmp.video);
-// 		tmp.point = El_data->Attribute ("point");
-// 		tmp.point_id = get_point_id(tmp.point);
-// 		tmp.version = string_to_int(El_data->Attribute ("version"));
-// 		tmp.source = El_data->Attribute ("source");
-// 		std::string stmp = char_to_string (El_data->GetText ());
-// 		std::istringstream smallData (stmp, std::ios_base::in);
-// 		smallData >> tmp.value.x;
-// 		smallData >> tmp.value.y;
-		
 		data->SetAttribute("frame",new_data[i].frame);
 		data->SetAttribute("video",new_data[i].video.c_str());
-// 		data->SetAttribute("video_id",new_data[i].video_id);
 		data->SetAttribute("point",new_data[i].point.c_str());
-// 		data->SetAttribute("point_id",new_data[i].point_id);
 		data->SetAttribute("version",new_data[i].version);
 		data->SetAttribute("source",new_data[i].source.c_str());
 		std::string tmp = double_to_string(new_data[i].value.x)+ " " + double_to_string(new_data[i].value.y);
 		tinyxml2::XMLText * text = doc_.NewText (tmp.c_str ());
 		data->InsertEndChild (text);
-
-		
-// 		node->InsertEndChild (text);
-// 		data->InsertEndChild (node);
-// 
-// 		node = doc_.NewElement ("video");
-// 		text = doc_.NewText (new_data[i].video.c_str ());
-// 		node->InsertEndChild (text);
-// 		data->InsertEndChild (node);
-// 		
-// 		node = doc_.NewElement ("video");
-// 		text = doc_.NewText (new_data[i].video.c_str ());
-// 		node->InsertEndChild (text);
-// 		data->InsertEndChild (node);
-// typedef struct
-// {
-// 	int frame;
-// 	std::string video;
-// 	int video_id;
-// 	std::string point;
-// 	int point_id;
-// 	int version;
-// 	std::string source;
-// 	CvPoint value;
-// }video_data;
 	}
 	doc_.SaveFile (project_file_.c_str());
 }
