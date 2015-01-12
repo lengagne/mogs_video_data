@@ -78,6 +78,8 @@ bool video_interface::add_video_to_project(const std::string &file,
 	IplImage *image = cvQueryFrame(capture);
 	tmp.width = image->width;
 	tmp.height = image->height;
+	cvReleaseCapture(&capture);
+	
 		
 	// add the data to the xml
 	tinyxml2::XMLElement * video = doc_.NewElement ("video");

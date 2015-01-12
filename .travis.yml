@@ -1,0 +1,10 @@
+language: cpp
+compiler:
+  - gcc
+  
+branches:
+        only:
+                -master
+                -dev
+
+script: sudo ./auto_install
