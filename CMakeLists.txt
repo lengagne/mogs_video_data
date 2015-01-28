@@ -22,9 +22,10 @@ endforeach()
 
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE})
 
-
+FIND_PACKAGE(Qt4 REQUIRED)
 find_package( OpenCV REQUIRED )
 find_package( MoGS_Tinyxml REQUIRED )
+
 
 add_subdirectory(3rdparty)
 
@@ -33,25 +34,47 @@ file(	GLOB_RECURSE
 	src/*.cpp
 )
 
+file(	GLOB_RECURSE
+	include_files_MOGS_VIDEO_DATA
+	include/*.h
+)
+
 LIST(REMOVE_ITEM source_files_MOGS_VIDEO_DATA  ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
 
 configure_file ( "${PROJECT_SOURCE_DIR}/config_Video_data.h.in"
 		 "${PROJECT_SOURCE_DIR}/include/config_Video_data.h" )
 
+SET(MOGS_VIDEO_DATA_FORMS qt_files/mogs_video_widget.ui)
+
+QT4_WRAP_CPP(MOGS_VIDEO_DATA_HEADERS_MOC ${include_files_MOGS_VIDEO_DATA})
+QT4_WRAP_UI(MOGS_VIDEO_DATA_FORMS_HEADERS ${MOGS_VIDEO_DATA_FORMS})
+QT4_ADD_RESOURCES(MOGS_VIDEO_DATA_RESOURCES_RCC ${MOGS_VIDEO_DATA_RESOURCES})
+
 include_directories(	include
 			3rdparty/tld
 			${OpenCV_INCLUDE_DIRS}
 			${MoGS_Tinyxml_INCLUDE_DIRS}
-			)
+			${CMAKE_CURRENT_BINARY_DIR}
+			${CMAKE_CURRENT_BINARY_DIR}/..)
 
+include(${QT_USE_FILE})
+			
+ADD_DEFINITIONS(${QT_DEFINITIONS})
+			
 link_directories(	${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE}
 )
 
+message("CMAKE_CURRENT_BINARY_DIR = " ${CMAKE_CURRENT_BINARY_DIR})
+
 ADD_LIBRARY(	MoGS_Video_Data SHARED 
-		${source_files_MOGS_VIDEO_DATA}		
+		${source_files_MOGS_VIDEO_DATA}
+		${MOGS_VIDEO_DATA_HEADERS_MOC} 
+		${MOGS_VIDEO_DATA_FORMS_HEADERS} 
+		${MOGS_VIDEO_DATA_RESOURCES_RCC}
 )
 # 
 target_link_libraries(MoGS_Video_Data
+			${QT_LIBRARIES}
 			${OpenCV_LIBS} 
 			${OPENTLD_LIBS}
 			${CONFIGPP_LIBS}
