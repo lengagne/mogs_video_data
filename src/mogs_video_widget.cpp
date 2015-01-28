@@ -11,6 +11,8 @@ mogs_video_widget::mogs_video_widget(QWidget *parent) : QMainWindow(parent),
     ui->setupUi(this);
 
     connect(ui->actionInit, SIGNAL(triggered()), this, SLOT(initialisation()));
+    connect(ui->actionNouveau_projet, SIGNAL(triggered()), this, SLOT(new_project()));
+    connect(ui->actionOuvrir_projet, SIGNAL(triggered()), this, SLOT(open_project()));
     connect(ui->actionAjouter_point, SIGNAL(triggered()), this, SLOT(add_point()));
     connect(ui->actionAjouter_video, SIGNAL(triggered()), this, SLOT(add_video()));
     connect(ui->actionSupprimer_point, SIGNAL(triggered()), this, SLOT(remove_point()));
@@ -61,10 +63,47 @@ void mogs_video_widget::initialisation()
     qDebug()<<"Initialisation";
 }
 
+void mogs_video_widget::new_project()
+{
+    qDebug()<<"New project";
+}
+
+void mogs_video_widget::on_listView_2_clicked(const QModelIndex &index)
+{
+    QString video_name = ui->listView_2->get_active_video_name();
+    ui->Label_selected_video->setText("Selected Video : " + video_name);
+    ui->tableView->set_active_video(video_name);
+}
+
 void mogs_video_widget::on_play_pause_button_clicked()
 {
     qDebug()<<"Push on play/pause ";
     pause_ = !pause_;
+}
+
+void mogs_video_widget::on_pushButton_clicked()
+{
+    qDebug()<<"Manual editing pressed";
+}
+
+void mogs_video_widget::on_pushButton_2_clicked()
+{
+    qDebug()<<"Automatic editing pressed";
+}
+
+void mogs_video_widget::open_project()
+{
+    qDebug()<<"Open project";
+}
+
+void mogs_video_widget::remove_point()
+{
+    qDebug()<<"Remove point";
+}
+
+void mogs_video_widget::remove_video()
+{
+    qDebug()<<"Remove video";
 }
 
 void mogs_video_widget::scroll_bar(int value)
@@ -86,31 +125,4 @@ void mogs_video_widget::timerEvent(QTimerEvent*)
     scene->DrawRectangle();
     // scale the video
     ui->OpenCVWindow->fitInView(scene->sceneRect(),Qt::KeepAspectRatio);
-}
-
-void mogs_video_widget::on_listView_2_clicked(const QModelIndex &index)
-{
-    QString video_name = ui->listView_2->get_active_video_name();
-    ui->Label_selected_video->setText("Selected Video : " + video_name);
-    ui->tableView->set_active_video(video_name);
-}
-
-void mogs_video_widget::remove_point()
-{
-    qDebug()<<"Remove point";
-}
-
-void mogs_video_widget::remove_video()
-{
-    qDebug()<<"Remove video";
-}
-
-void mogs_video_widget::on_pushButton_clicked()
-{
-    qDebug()<<"Manual editing pressed";
-}
-
-void mogs_video_widget::on_pushButton_2_clicked()
-{
-    qDebug()<<"Automatic editing pressed";
 }

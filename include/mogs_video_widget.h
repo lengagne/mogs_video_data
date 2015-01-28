@@ -34,8 +34,10 @@ private slots:
     void add_point();
     void add_video();
     void initialisation();
+    void new_project();
     void on_listView_2_clicked(const QModelIndex &index);
     void on_play_pause_button_clicked();
+    void open_project();
     void remove_point();
     void remove_video();
     void scroll_bar(int value);

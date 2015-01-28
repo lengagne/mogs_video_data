@@ -218,6 +218,9 @@
 
 #include <QtGui/QApplication>
 #include "mogs_video_widget.h"
+#include "video_interface.h"
+
+
 
 int main(int argc, char *argv[])
 {

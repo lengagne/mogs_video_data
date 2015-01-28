@@ -210,7 +210,6 @@
     <property name="title">
      <string>menu</string>
     </property>
-    <addaction name="actionInit"/>
     <addaction name="separator"/>
     <addaction name="actionNouveau_projet"/>
     <addaction name="actionOuvrir_projet"/>
