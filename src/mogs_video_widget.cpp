@@ -58,11 +58,6 @@ void mogs_video_widget::add_video()
     qDebug()<<"Add video";
 }
 
-void mogs_video_widget::initialisation()
-{
-    qDebug()<<"Initialisation";
-}
-
 void mogs_video_widget::new_project()
 {
     qDebug()<<"New project";
@@ -92,8 +87,20 @@ void mogs_video_widget::on_pushButton_2_clicked()
 }
 
 void mogs_video_widget::open_project()
-{
+{   
     qDebug()<<"Open project";
+    List_choose *w = new List_choose();
+    std::vector<std::string> list;
+    list.push_back("list item 1");
+    list.push_back("list item 2");
+    list.push_back("list item 3");
+    w->setList(list);
+    QString text;
+    w->setString(&text);
+    w->show();
+    w->exec();
+
+    qDebug()<<" text  = "<< text;
 }
 
 void mogs_video_widget::remove_point()

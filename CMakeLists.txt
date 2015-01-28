@@ -44,7 +44,8 @@ LIST(REMOVE_ITEM source_files_MOGS_VIDEO_DATA  ${CMAKE_CURRENT_SOURCE_DIR}/src/m
 configure_file ( "${PROJECT_SOURCE_DIR}/config_Video_data.h.in"
 		 "${PROJECT_SOURCE_DIR}/include/config_Video_data.h" )
 
-SET(MOGS_VIDEO_DATA_FORMS qt_files/mogs_video_widget.ui)
+SET(MOGS_VIDEO_DATA_FORMS 	qt_files/mogs_video_widget.ui
+				qt_files/list_choose.ui)
 
 QT4_WRAP_CPP(MOGS_VIDEO_DATA_HEADERS_MOC ${include_files_MOGS_VIDEO_DATA})
 QT4_WRAP_UI(MOGS_VIDEO_DATA_FORMS_HEADERS ${MOGS_VIDEO_DATA_FORMS})

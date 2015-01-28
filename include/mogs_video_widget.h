@@ -12,6 +12,8 @@
 #include "mogs_qt_video_scene.h"
 #include "mogs_qt_list_point.h"
 #include "mogs_qt_list_video.h"
+#include "video_interface.h"
+#include "list_choose.h"
 
 namespace Ui {
 class mogs_video_widget;
@@ -33,8 +35,9 @@ private slots:
 
     void add_point();
     void add_video();
-    void initialisation();
     void new_project();
+    void on_pushButton_clicked();
+    void on_pushButton_2_clicked();
     void on_listView_2_clicked(const QModelIndex &index);
     void on_play_pause_button_clicked();
     void open_project();
@@ -42,9 +45,6 @@ private slots:
     void remove_video();
     void scroll_bar(int value);
 
-    void on_pushButton_clicked();
-
-    void on_pushButton_2_clicked();
 
 private:
     Ui::mogs_video_widget *ui;
@@ -52,6 +52,8 @@ private:
 
     mogs_qt_video_scene *scene;
     IplImage *image;
+    
+    video_interface project_;
 
 };
 
