@@ -5,6 +5,7 @@
 #include <QDebug>
 #include <QStringListModel>
 #include "qt_get_point_name.h"
+#include "qt_rep_name.h"
 
 mogs_video_widget::mogs_video_widget(QWidget *parent) : QMainWindow(parent),
     ui(new Ui::mogs_video_widget),project_(NULL)
@@ -86,7 +87,14 @@ void mogs_video_widget::add_video()
 
 void mogs_video_widget::new_project()
 {
-    qDebug()<<"New project";
+	qt_rep_name *window = new qt_rep_name();
+	QString path;
+	window->set_path_and_name(&path,&project_name);
+	window->show();
+	window->exec();
+	QString total = path + "/" + project_name;
+	project_ = new video_interface ();
+	project_->new_project(total.toStdString());
 }
 
 void mogs_video_widget::on_listView_2_clicked(const QModelIndex &index)
