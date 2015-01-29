@@ -4,6 +4,7 @@
 #include <iostream>
 #include <QDebug>
 #include <QStringListModel>
+#include "qt_get_point_name.h"
 
 mogs_video_widget::mogs_video_widget(QWidget *parent) : QMainWindow(parent),
     ui(new Ui::mogs_video_widget),project_(NULL)
@@ -57,7 +58,25 @@ mogs_video_widget::~mogs_video_widget()
 
 void mogs_video_widget::add_point()
 {
-    qDebug()<<"Add point";
+	if (project_)
+	{
+		qt_get_point_name *window = new qt_get_point_name();
+		QString name;
+		window->set_string(&name);
+		window->show();
+		window->exec();		
+		qDebug()<<"Add point : "<< name;
+		project_->add_point_to_project(name.toStdString());
+		delete project_;
+		project_ = new video_interface();
+		if ( project_->read(project_name.toStdString()))
+			qDebug()<<" Project reading done";
+		else
+			qDebug()<<" Project reading failed";
+
+		update_list_point();
+		delete window;
+	}    
 }
 
 void mogs_video_widget::add_video()
@@ -104,13 +123,11 @@ void mogs_video_widget::open_project()
     qDebug()<<"Open project";
     
     List_repo *w = new List_repo();
-    QString text;
-    w->set_file(&text);
+    w->set_file(&project_name);
     w->show();
     w->exec();
 
-    qDebug()<<" text  = "<< text;
-    if ( project_->read(text.toStdString()))
+    if ( project_->read(project_name.toStdString()))
 	qDebug()<<" Project reading done";
     else
 	qDebug()<<" Project reading failed";

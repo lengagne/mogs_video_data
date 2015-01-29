@@ -28,7 +28,6 @@ void mogs_qt_list_point::mousePressEvent(QMouseEvent *mouseEvent)
 	QModelIndex index;
 	index = currentIndex();
 	int row = index.row();
-	int col = index.column();
 
 	if (mouseEvent->button() == Qt::LeftButton)
 	{
