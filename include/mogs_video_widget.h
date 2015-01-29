@@ -14,6 +14,7 @@
 #include "mogs_qt_list_video.h"
 #include "video_interface.h"
 #include "list_choose.h"
+#include "list_repo.h"
 
 namespace Ui {
 class mogs_video_widget;
@@ -53,7 +54,7 @@ private:
     mogs_qt_video_scene *scene;
     IplImage *image;
     
-    video_interface project_;
+    video_interface *project_;
 
 };
 

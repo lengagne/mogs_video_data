@@ -6,7 +6,7 @@
 #include <QStringListModel>
 
 mogs_video_widget::mogs_video_widget(QWidget *parent) : QMainWindow(parent),
-    ui(new Ui::mogs_video_widget)
+    ui(new Ui::mogs_video_widget),project_(NULL)
 {
     ui->setupUi(this);
 
@@ -88,19 +88,30 @@ void mogs_video_widget::on_pushButton_2_clicked()
 
 void mogs_video_widget::open_project()
 {   
+	if (project_)
+	{
+		delete project_;
+	}
+	project_ = new video_interface();
+	
     qDebug()<<"Open project";
-    List_choose *w = new List_choose();
-    std::vector<std::string> list;
-    list.push_back("list item 1");
-    list.push_back("list item 2");
-    list.push_back("list item 3");
-    w->setList(list);
+    
+    List_repo *w = new List_repo();
     QString text;
-    w->setString(&text);
+    w->set_file(&text);
     w->show();
     w->exec();
 
     qDebug()<<" text  = "<< text;
+    if ( project_->read(text.toStdString()))
+	qDebug()<<" Project reading done";
+    else
+	qDebug()<<" Project reading failed";
+    
+    std::vector<std::string> points = project_->get_points_list();
+    std::cout<<" points = "<< points.size()<<std::endl;
+    ui->tableView->set_list(points);
+	    
 }
 
 void mogs_video_widget::remove_point()

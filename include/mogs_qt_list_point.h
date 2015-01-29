@@ -13,17 +13,19 @@ public:
     explicit mogs_qt_list_point(QWidget *parent = 0);
     ~mogs_qt_list_point();
 
-    int rowCount(const QModelIndex &parent = QModelIndex()) const
-    {
-
-    }
-
-    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const
-    {
-
-    }
+//     int rowCount(const QModelIndex &parent = QModelIndex()) const
+//     {
+// 
+//     }
+// 
+//     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const
+//     {
+// 
+//     }
 
     void set_active_video(QString &video_name);
+    
+    void set_list(const std::vector<std::string> &list);
 
 
 signals:

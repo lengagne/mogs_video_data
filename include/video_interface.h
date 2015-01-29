@@ -55,7 +55,10 @@ class video_interface
 			const std::string &point);
 	
 	/** Return the list of the existing projects **/
-	std::vector<std::string> get_projects();
+	std::vector<std::string> get_points_list()
+	{
+		return points_;
+	}
 	
 	
 	/** Create a new project **/

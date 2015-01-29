@@ -196,7 +196,7 @@ bool video_interface::point_exists(const std::string & name)
 
 bool video_interface::read(const std::string project_name)
 {
-	project_file_ = project_name + ".xml";
+	project_file_ = project_name;
 	std::string cmd = "xmllint --dtdvalid " + (std::string) DTD_REPOSITORY + "/project_video_tracking.dtd --noout "+project_file_;
 	int retCode = system (cmd.c_str ());
 	if (retCode != 0)
