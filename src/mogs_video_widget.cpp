@@ -44,8 +44,15 @@ mogs_video_widget::mogs_video_widget(QWidget *parent) : QMainWindow(parent),
 
 mogs_video_widget::~mogs_video_widget()
 {
-    cvReleaseCapture(&camera);
-    delete ui;
+	cvReleaseCapture(&camera);
+	delete ui;
+	
+	if (project_)
+	{
+		project_->save_data();
+		delete project_;
+	}
+	std::cout<<"Closing mogs_video_data"<<std::endl;
 }
 
 void mogs_video_widget::add_point()
@@ -108,15 +115,19 @@ void mogs_video_widget::open_project()
     else
 	qDebug()<<" Project reading failed";
     
-    std::vector<std::string> points = project_->get_points_list();
-    std::cout<<" points = "<< points.size()<<std::endl;
-    ui->tableView->set_list(points);
-	    
+    update_list_point();
 }
 
 void mogs_video_widget::remove_point()
 {
-    qDebug()<<"Remove point";
+	if (project_)
+	{
+		QString name;
+		ui->tableView->get_selected_name(name);
+		qDebug()<<"Remove point : "<< name;
+		project_->remove_point_to_project(name.toStdString());
+		update_list_point();
+	}
 }
 
 void mogs_video_widget::remove_video()
@@ -143,4 +154,10 @@ void mogs_video_widget::timerEvent(QTimerEvent*)
     scene->DrawRectangle();
     // scale the video
     ui->OpenCVWindow->fitInView(scene->sceneRect(),Qt::KeepAspectRatio);
+}
+
+void mogs_video_widget::update_list_point()
+{
+	std::vector<std::string> points = project_->get_points_list();
+	ui->tableView->set_list(points);	
 }

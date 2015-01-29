@@ -8,41 +8,32 @@
 
 class mogs_qt_list_point : public QTableView
 {
-    //Q_OBJECT
+	Q_OBJECT
 public:
-    explicit mogs_qt_list_point(QWidget *parent = 0);
-    ~mogs_qt_list_point();
+	explicit mogs_qt_list_point(QWidget *parent = 0);
+	~mogs_qt_list_point();
+	
+	/** Return true if a point is selected
+	 * and return the name*/
+	bool get_selected_name(QString & name);
 
-//     int rowCount(const QModelIndex &parent = QModelIndex()) const
-//     {
-// 
-//     }
-// 
-//     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const
-//     {
-// 
-//     }
-
-    void set_active_video(QString &video_name);
-    
-    void set_list(const std::vector<std::string> &list);
-
+	void set_active_video(QString &video_name);
+	
+	void set_list(const std::vector<std::string> &list);
 
 signals:
 
 public slots:
 
 protected:
-    void mousePressEvent(QMouseEvent *mouseEvent);
+	void mousePressEvent(QMouseEvent *mouseEvent);
 
 private:
-
-    QStandardItemModel *model;
-    QStringList list_point;
-
-    QStandardItem * name;
-
-    std::vector<QStandardItem *> Items_;
+	QStandardItemModel *model;
+	QStringList list_point;
+	QString select_name;
+	QStandardItem * name;
+	std::vector<QStandardItem *> Items_;
 };
 
 #endif // MOGS_QT_LIST_POINT_H

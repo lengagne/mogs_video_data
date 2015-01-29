@@ -48,6 +48,9 @@ private slots:
 
 
 private:
+	void update_list_point();
+	
+	
     Ui::mogs_video_widget *ui;
     bool pause_;
 

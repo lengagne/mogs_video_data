@@ -73,8 +73,11 @@ class video_interface
 	/** Read the data  */
 	bool read_data( );
 	
+	/** Remove point from the list	*/
+	bool remove_point_to_project(const std::string &name);
+	
 	/** Save the new selected values **/
-	void save_data(int version);
+	void save_data(int version =-1);
 	
 	/** Show the details of a project **/
 	void show() const;

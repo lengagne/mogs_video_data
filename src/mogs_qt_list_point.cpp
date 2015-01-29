@@ -5,49 +5,56 @@
 
 mogs_qt_list_point::mogs_qt_list_point(QWidget *parent)
 {
-	std::cout<<"mogs_qt_list_point constructor"<<std::endl;
 	model = new QStandardItemModel(list_point.size(),3,this); //2 Rows and 3 Columns
 	model->setHorizontalHeaderItem(0, new QStandardItem(QString("Point name")));
 	name = new QStandardItem(QString("Selected Video"));
 	model->setHorizontalHeaderItem(1, name );
 	QStandardItem * name2 = new QStandardItem(QString("On the frame"));
 	model->setHorizontalHeaderItem(2, name2 );
-	qDebug()<<" model = "<< model ;
 	setModel(model);
+	select_name = "";
 }
 
 mogs_qt_list_point::~mogs_qt_list_point()
 {
-    for (int i=0;i<Items_.size();i++)
-        delete Items_[i];
-    Items_.clear();
+	for (int i=0;i<Items_.size();i++)
+		delete Items_[i];
+	Items_.clear();
 }
 
 void mogs_qt_list_point::mousePressEvent(QMouseEvent *mouseEvent)
 {
-    QTableView::mousePressEvent(mouseEvent);
-    QModelIndex index;
-    index = currentIndex();
-    int row = index.row();
-    int col = index.column();
+	QTableView::mousePressEvent(mouseEvent);
+	QModelIndex index;
+	index = currentIndex();
+	int row = index.row();
+	int col = index.column();
 
-    if (mouseEvent->button() == Qt::LeftButton)
-    {
-        qDebug()<<"Point Clic on list with left button"<<row;
-        if (row != -1)
-            qDebug()<<"Point Clic on list with left button : "<<list_point[row]<<" Column = "<<col;
+	if (mouseEvent->button() == Qt::LeftButton)
+	{
+		if (row != -1)
+		{
+			select_name = list_point[row];
+		}
+	}
+	if (mouseEvent->button() == Qt::RightButton)
+	{
+		qDebug()<<"Point Clic on list with right button";
+	}
+}
 
-    }
-    if (mouseEvent->button() == Qt::RightButton)
-    {
-        qDebug()<<"Point Clic on list with right button";
-    }
+bool mogs_qt_list_point::get_selected_name(QString & name)
+{
+	if (select_name =="")
+		return false;
+	name = select_name;
+	return true;
 }
 
 void mogs_qt_list_point::set_active_video(QString &video_name)
 {
-    qDebug()<<"SetActiveVideo";
-    name->setText(video_name);
+	qDebug()<<"SetActiveVideo";
+	name->setText(video_name);
 }
 
 void mogs_qt_list_point::set_list(const std::vector<std::string> & list)
@@ -57,9 +64,7 @@ void mogs_qt_list_point::set_list(const std::vector<std::string> & list)
 	for (int i=0;i<Items_.size();i++)
 		delete Items_[i];
 	Items_.clear();
-	//model->removeRows(0,model->rowCount());
 	model->clear();
-	
 	
 	for (int i=0;i<list.size();i++)
 	{

@@ -356,24 +356,57 @@ void video_interface::read_video_description(tinyxml2::XMLElement * El)
 	videos_.push_back(tmp_video);
 }
 
+bool video_interface::remove_point_to_project(const std::string &name)
+{
+	if (!point_exists(name))
+	{
+		std::cerr<<"The point "<<name<<" does not exist and you try to remove it."<<std::endl;
+		return false;
+	}
+	
+	// remove from the xml
+	tinyxml2::XMLElement * El_point = El_points_->FirstChildElement ("point");
+	for (El_point; El_point; El_point = El_point->NextSiblingElement ("point"))
+	{
+		std::string tmp = char_to_string(El_point->GetText());
+		if (tmp == name)
+		{
+			El_points_->DeleteChild (El_point);
+		}
+	}
+	// save the xml
+	save_data();
+	
+	// remove from the list files
+	for (int i=0;i<points_.size();i++)
+		if (points_[i]==name)
+		{
+			points_.erase(points_.begin()+i);
+		}
+	return true;
+}
+
 void video_interface::save_data(int version)
 {
-	std::vector<video_data> new_data;
-	video_data_->get_new_version_data(version,new_data);
-	int nb= new_data.size();
-	for (int i=0;i<nb;i++)
+	if (version != -1)
 	{
-		// add the data to the xml
-		tinyxml2::XMLElement * data = doc_.NewElement ("data");
-		El_datas_->InsertEndChild (data);
-		data->SetAttribute("frame",new_data[i].frame);
-		data->SetAttribute("video",new_data[i].video.c_str());
-		data->SetAttribute("point",new_data[i].point.c_str());
-		data->SetAttribute("version",new_data[i].version);
-		data->SetAttribute("source",new_data[i].source.c_str());
-		std::string tmp = double_to_string(new_data[i].value.x)+ " " + double_to_string(new_data[i].value.y);
-		tinyxml2::XMLText * text = doc_.NewText (tmp.c_str ());
-		data->InsertEndChild (text);
+		std::vector<video_data> new_data;
+		video_data_->get_new_version_data(version,new_data);
+		int nb= new_data.size();
+		for (int i=0;i<nb;i++)
+		{
+			// add the data to the xml
+			tinyxml2::XMLElement * data = doc_.NewElement ("data");
+			El_datas_->InsertEndChild (data);
+			data->SetAttribute("frame",new_data[i].frame);
+			data->SetAttribute("video",new_data[i].video.c_str());
+			data->SetAttribute("point",new_data[i].point.c_str());
+			data->SetAttribute("version",new_data[i].version);
+			data->SetAttribute("source",new_data[i].source.c_str());
+			std::string tmp = double_to_string(new_data[i].value.x)+ " " + double_to_string(new_data[i].value.y);
+			tinyxml2::XMLText * text = doc_.NewText (tmp.c_str ());
+			data->InsertEndChild (text);
+		}
 	}
 	doc_.SaveFile (project_file_.c_str());
 }
