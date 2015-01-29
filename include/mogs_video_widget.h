@@ -49,6 +49,7 @@ private slots:
 
 private:
 	void update_list_point();
+	void update_list_video();
 	
 	QString project_name;
     Ui::mogs_video_widget *ui;

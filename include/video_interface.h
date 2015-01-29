@@ -54,12 +54,14 @@ class video_interface
 	void edit_data( const std::string &video,
 			const std::string &point);
 	
-	/** Return the list of the existing projects **/
+	/** Return the list of the existing points **/
 	std::vector<std::string> get_points_list()
 	{
 		return points_;
 	}
 	
+	/** Return the list of the existing points **/
+	std::vector<std::string>  get_videos_list();
 	
 	/** Create a new project **/
 	void new_project(const std::string project_name);

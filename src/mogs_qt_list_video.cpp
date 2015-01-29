@@ -8,9 +8,6 @@
 mogs_qt_list_video::mogs_qt_list_video(QWidget *parent)
 {
     model_video = new QStringListModel();
-
-    list_video << "Video_A" << "Video_B" << "Video_C";
-    model_video->setStringList(list_video);
     setModel(model_video);
 
     active_video_ = "";
@@ -44,4 +41,15 @@ void mogs_qt_list_video::mousePressEvent(QMouseEvent *mouseEvent)
 QString mogs_qt_list_video::get_active_video_name()
 {
     return active_video_;
+}
+
+void mogs_qt_list_video::set_list(const std::vector<std::string> & list)
+{
+	list_video.clear();
+	model_video->removeRows(0,model_video->rowCount());
+	for (int i=0;i<list.size();i++)
+	{
+		list_video << list[i].c_str();
+	}
+	model_video->setStringList(list_video);	
 }

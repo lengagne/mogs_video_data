@@ -158,6 +158,15 @@ int video_interface::get_video_id( const std::string & name) const
 	return -1;
 }
 
+std::vector<std::string>  video_interface::get_videos_list()
+{
+	int nb = videos_.size();
+	std::vector<std::string> out;
+	for (int i=0;i<nb;i++)
+		out.push_back(videos_[i].video_name);
+	return out;
+}
+
 void video_interface::new_project(const std::string project_name)
 {   
 	project_file_ = project_name + ".xml";

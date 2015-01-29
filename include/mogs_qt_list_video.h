@@ -11,35 +11,27 @@
 
 class mogs_qt_list_video : public QListView
 {
-    Q_OBJECT
+	Q_OBJECT
 public:
-    explicit mogs_qt_list_video(QWidget *parent = 0);
-    ~mogs_qt_list_video();
+	explicit mogs_qt_list_video(QWidget *parent = 0);
+	~mogs_qt_list_video();
 
-    int rowCount(const QModelIndex &parent = QModelIndex()) const
-    {
+	QString get_active_video_name();
 
-    }
-
-    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const
-    {
-
-    }
-
-    QString get_active_video_name();
-
+	void set_list(const std::vector<std::string> &list);
+    
 signals:
 
 public slots:
 
 protected:
-    void mousePressEvent(QMouseEvent *mouseEvent);
+	void mousePressEvent(QMouseEvent *mouseEvent);
 
 private:
 
-    QStringListModel *model_video;
-    QStringList list_video;
-    QString active_video_;
+	QStringListModel *model_video;
+	QStringList list_video;
+	QString active_video_;
 };
 
 #endif // mogs_qt_list_video_H

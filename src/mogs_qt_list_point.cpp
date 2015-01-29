@@ -73,6 +73,5 @@ void mogs_qt_list_point::set_list(const std::vector<std::string> & list)
 		model->setItem(i,1,new QStandardItem(QString("no")));
 		model->setItem(i,2,new QStandardItem(QString("no")));
 		Items_.push_back(currentItem);
-	}	
-
+	}
 }

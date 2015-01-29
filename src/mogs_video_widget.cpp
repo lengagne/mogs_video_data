@@ -82,7 +82,12 @@ void mogs_video_widget::add_point()
 
 void mogs_video_widget::add_video()
 {
-    qDebug()<<"Add video";
+	/*qt_rep_name *window = new qt_rep_name();
+	QString video_file, video_name;
+	window->set_path_and_name(&video_file,&video_name);
+	window->show();
+	window->exec();
+	project_->add_video_to_project(video_file.toStdString(), video_name.toStdString());*/
 }
 
 void mogs_video_widget::new_project()
@@ -141,6 +146,7 @@ void mogs_video_widget::open_project()
 	qDebug()<<" Project reading failed";
     
     update_list_point();
+    update_list_video();
 }
 
 void mogs_video_widget::remove_point()
@@ -184,5 +190,11 @@ void mogs_video_widget::timerEvent(QTimerEvent*)
 void mogs_video_widget::update_list_point()
 {
 	std::vector<std::string> points = project_->get_points_list();
-	ui->tableView->set_list(points);	
+	ui->tableView->set_list(points);
+}
+
+void mogs_video_widget::update_list_video()
+{
+	std::vector<std::string> videos = project_->get_videos_list();
+	ui->listView_2->set_list(videos);	
 }
