@@ -15,6 +15,23 @@ mogs_qt_video_scene::~mogs_qt_video_scene()
 
 }
 
+void mogs_qt_video_scene::DrawPoint(	CvPoint in,
+					QString name)
+{
+	QPen outlinePen(Qt::red);
+	outlinePen.setWidth(3);
+	addEllipse(in.x, in.y, 5, 5,outlinePen);
+	
+	if (name != "")
+	{
+		QGraphicsTextItem * io = new QGraphicsTextItem;
+		io->setDefaultTextColor(Qt::red);
+		io->setPos(in.x -20,in.y);
+		io->setPlainText(name);
+		addItem(io);
+	}
+}
+
 void mogs_qt_video_scene::DrawRectangle()
 {
     if(rectangle_ready_)

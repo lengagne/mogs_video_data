@@ -25,8 +25,6 @@
 #include "TLD.h"
 #include "TLDUtil.h"
 
-
-
 typedef struct{
 	IplImage *image;
 	CvPoint* Pt1;

@@ -132,7 +132,7 @@ void video_interface::edit_data( const std::string &video,
 	std::cout<<"Click on the image to select the point for "<< point<<"."<<std::endl;
 	std::cout<<"Draw a rectangle and push 't' in order to do automatic tracking."<<std::endl;
 	std::cout<<"edit_data "<< video<< " "<< point<<std::endl;
-	read_data();
+// 	read_data();
 	int video_id = get_video_id(video);
 	int point_id = get_point_id(point);
 	extractor_ = new video_extractor(video,video_id,point,point_id, videos_[video_id].video_file);
@@ -163,6 +163,17 @@ void video_interface::get_images(const std::string video_name,
 		images[i] = cvCloneImage( cvQueryFrame(capture));
 	}
 	cvReleaseCapture(&capture);
+}
+
+bool video_interface::get_point( const std::string video_name,
+				 const std::string point_name,
+				int frame,
+				CvPoint& point) const
+{
+	int video_id = get_video_id(video_name);
+	int point_id = get_point_id(point_name);
+
+	return video_data_->get_value(frame,video_id,point_id,point);
 }
 
 int video_interface::get_point_id( const std::string & name) const
@@ -208,7 +219,7 @@ void video_interface::new_project(const std::string project_name)
 
 void video_interface::play_video(const std::string &video )
 {
-	read_data();
+// 	read_data();
 	int video_id = get_video_id(video);
 	extractor_ = new video_extractor(video,video_id, videos_[video_id].video_file);
 	extractor_->set_data(video_data_);
@@ -294,6 +305,8 @@ bool video_interface::read(const std::string project_name)
 		std::cerr << " Error cannot find the Datas" << std::endl;
 		return false;
 	}	
+	
+	read_data();
 	
 	return true;
 }

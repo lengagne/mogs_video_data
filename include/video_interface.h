@@ -59,8 +59,14 @@ class video_interface
 			std::vector<IplImage *> & images,
 			int * fps);
 	
+	/** Return true if the point exists*/
+	bool get_point( const std::string video_name,
+			const std::string point_name,
+			int frame,
+			CvPoint& point) const;
+	
 	/** Return the list of the existing points **/
-	std::vector<std::string> get_points_list()
+	std::vector<std::string> get_points_list() const
 	{
 		return points_;
 	}

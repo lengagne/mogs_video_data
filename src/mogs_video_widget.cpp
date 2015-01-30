@@ -30,7 +30,7 @@ mogs_video_widget::mogs_video_widget(QWidget *parent) : QMainWindow(parent),
  
 	images_.clear();
 
-	startTimer(10);
+	timer_id_ = startTimer(100);
 	pause_ = true;
 }
 
@@ -55,7 +55,6 @@ void mogs_video_widget::add_point()
 		window->set_string(&name);
 		window->show();
 		window->exec();		
-		qDebug()<<"Add point : "<< name;
 		project_->add_point_to_project(name.toStdString());
 		update_list_point();
 		delete window;
@@ -65,11 +64,11 @@ void mogs_video_widget::add_point()
 void mogs_video_widget::add_video()
 {
 	qt_rep_name *window = new qt_rep_name();
-	QString video_file, video_name;
-	window->set_path_and_name(&video_file,&video_name);
+	QString video_file;
+	window->set_path_and_name(&video_file,&video_name_);
 	window->show();
 	window->exec();
-	project_->add_video_to_project(video_file.toStdString(), video_name.toStdString());
+	project_->add_video_to_project(video_file.toStdString(), video_name_.toStdString());
 	update_list_video();
 }
 
@@ -87,13 +86,15 @@ void mogs_video_widget::new_project()
 
 void mogs_video_widget::on_listView_2_clicked(const QModelIndex &index)
 {
-	QString video_name = ui->listView_2->get_active_video_name();
-	if ( video_name != "")
+	video_name_ = ui->listView_2->get_active_video_name();
+	if ( video_name_ != "")
 	{
-		ui->Label_selected_video->setText("Selected Video : " + video_name);
-		ui->tableView->set_active_video(video_name);
+		ui->Label_selected_video->setText("Selected Video : " + video_name_);
+		ui->tableView->set_active_video(video_name_);
 		count_ = 0;
-		project_->get_images(video_name.toStdString(), images_, & video_fps_);
+		project_->get_images(video_name_.toStdString(), images_, & video_fps_);
+		killTimer(timer_id_);
+		timer_id_ = startTimer(1000./video_fps_);
 		pause_ = true;
 		ui->label->setText("frame: "+QString::number(count_)+"/ "+ QString::number(images_.size()));
 		ui->horizontalScrollBar->setMaximum(images_.size());
@@ -151,7 +152,6 @@ void mogs_video_widget::remove_point()
 	{
 		QString name;
 		ui->tableView->get_selected_name(name);
-		qDebug()<<"Remove point : "<< name;
 		project_->remove_point_to_project(name.toStdString());
 		update_list_point();
 	}
@@ -163,7 +163,6 @@ void mogs_video_widget::remove_video()
 	{
 		QString name;
 		name = ui->listView_2->get_active_video_name();
-		qDebug()<<"Remove video : "<< name;
 		project_->remove_video_to_project(name.toStdString());
 		update_list_video();
 	}
@@ -172,32 +171,16 @@ void mogs_video_widget::remove_video()
 void mogs_video_widget::scroll_bar(int value)
 {
 	count_ = value;
-	QString val = QString(value);
-	ui->label->setText("frame: "+QString::number(value)+"/ "+ QString::number(images_.size()));
+	update_image();
 }
 
 void mogs_video_widget::timerEvent(QTimerEvent*)
 {
-	if (scene)
-		scene->clear();
 	if (!pause_)
 	{
 		count_ ++;
-		if (count_ > images_.size()-1)
-			count_ = images_.size()-1;
-		ui->horizontalScrollBar->setValue(count_);
-		ui->label->setText("frame: "+QString::number(count_)+"/ "+ QString::number(images_.size()));
-		
-	}	
-	
-	if (images_.size() >0 && count_>=0 && count_ < images_.size())
-	{
-		if (scene)
-		{
-			IplImage* img = images_[count_];
-			scene->addPixmap(QPixmap::fromImage(ConvertImage(images_[count_])));
-		}
-	}	
+	}
+	update_image();
 	if (scene)
 	{
 		scene->DrawRectangle();
@@ -206,15 +189,43 @@ void mogs_video_widget::timerEvent(QTimerEvent*)
 	}
 }
 
+void mogs_video_widget::update_image()
+{
+	if (scene)
+		scene->clear();
+
+	if (count_ > images_.size()-1)
+	{
+		count_ = images_.size()-1;
+		pause_ = true;
+	}
+	ui->horizontalScrollBar->setValue(count_);
+	ui->label->setText("frame: "+QString::number(count_)+"/ "+ QString::number(images_.size()));
+	
+	if (images_.size() >0 && count_>=0 && count_ < images_.size())
+	{
+		if (scene)
+		{
+			
+			IplImage* img = cvCloneImage(images_[count_]);
+			scene->addPixmap(QPixmap::fromImage(ConvertImage(img)));
+			if (ui->tableView->get_selected_name(point_name_))
+			{
+				CvPoint visu_point;
+				if (project_->get_point(video_name_.toStdString(), point_name_.toStdString(), count_, visu_point))
+					scene->DrawPoint(visu_point,point_name_);
+			}
+		}
+	}		
+}
+
 void mogs_video_widget::update_list_point()
 {
 	if (project_)
 	{
 		delete project_;
 		project_ = new video_interface();
-		if ( project_->read(project_name.toStdString()))
-			qDebug()<<" Project reading done";
-		else
+		if (!project_->read(project_name.toStdString()))
 			qDebug()<<" Project reading failed";
 		std::vector<std::string> points = project_->get_points_list();
 		ui->tableView->set_list(points);
@@ -227,9 +238,7 @@ void mogs_video_widget::update_list_video()
 	{
 		delete project_;
 		project_ = new video_interface();
-		if ( project_->read(project_name.toStdString()))
-			qDebug()<<" Project reading done";
-		else
+		if (!project_->read(project_name.toStdString()))
 			qDebug()<<" Project reading failed";
 	
 		std::vector<std::string> videos = project_->get_videos_list();

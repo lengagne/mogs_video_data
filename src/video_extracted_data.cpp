@@ -95,11 +95,11 @@ bool video_extracted_data::get_value ( 	int frame,
 		{
 			version = datas_[i].version;
 			val = datas_[i].value;
+			return true;
 		}
 	}
 	if (version ==-1)
 		return false;
-	return true;
 }
 
 bool video_extracted_data::updatable( 	const video_data& a,

@@ -5,7 +5,8 @@
 #include <QGraphicsView>
 #include <QDialog>
 #include <QGraphicsItem>
-
+#include "highgui.h"
+#include "cv.h"
 
 class mogs_qt_video_scene : public QGraphicsScene
 {
@@ -14,6 +15,8 @@ public:
     explicit mogs_qt_video_scene(QWidget *parent = 0);
     ~mogs_qt_video_scene();
 
+    void DrawPoint(CvPoint in, QString name = "");
+    
     void DrawRectangle();
 
     void set_height(int h)
