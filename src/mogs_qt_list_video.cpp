@@ -20,22 +20,25 @@ mogs_qt_list_video::~mogs_qt_list_video()
 
 void mogs_qt_list_video::mousePressEvent(QMouseEvent *mouseEvent)
 {
-    QListView::mousePressEvent(mouseEvent);
-    QModelIndex index;
-    index = currentIndex();
-    int row  = index.row();
+	QListView::mousePressEvent(mouseEvent);
+	QModelIndex index;
+	index = currentIndex();
+	int row  = index.row();
 
-    if (mouseEvent->button() == Qt::LeftButton)
-    {
-        qDebug()<<"Video Clic on list with left button"<<row;
-        if (row != -1)
-            qDebug()<<"Video Clic on list with left button : "<<list_video[row];
-        active_video_ = list_video[row];
-    }
-    if(mouseEvent->button() == Qt::RightButton)
-    {
-        qDebug()<<"Video Clic on list with right button";
-    }
+	if (mouseEvent->button() == Qt::LeftButton)
+	{
+		qDebug()<<" row = "<< row;
+		qDebug()<<" list_video.size() = "<< list_video.size();
+		if (row >= 0 && row < list_video.size())
+		{
+			qDebug()<<"Video Clic on list with left button : "<<list_video[row];
+			active_video_ = list_video[row];
+		}
+	}
+	if(mouseEvent->button() == Qt::RightButton)
+	{
+		qDebug()<<"Video Clic on list with right button";
+	}
 }
 
 QString mogs_qt_list_video::get_active_video_name()

@@ -54,6 +54,11 @@ class video_interface
 	void edit_data( const std::string &video,
 			const std::string &point);
 	
+	/** Get all the images from the video */
+	void get_images(const std::string video_name,
+			std::vector<IplImage *> & images,
+			int * fps);
+	
 	/** Return the list of the existing points **/
 	std::vector<std::string> get_points_list()
 	{
@@ -77,6 +82,9 @@ class video_interface
 	
 	/** Remove point from the list	*/
 	bool remove_point_to_project(const std::string &name);
+	
+	/** Remove point from the list	*/
+	bool remove_video_to_project(const std::string &name);
 	
 	/** Save the new selected values **/
 	void save_data(int version =-1);

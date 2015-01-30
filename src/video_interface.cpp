@@ -142,6 +142,29 @@ void video_interface::edit_data( const std::string &video,
 	save_data(new_version);
 }
 
+void video_interface::get_images(const std::string video_name,
+				std::vector<IplImage *> & images,
+				int * fps)
+{
+	images.clear();
+	int video_id = get_video_id(video_name);
+	CvCapture  *capture = cvCaptureFromAVI( videos_[video_id].video_file.c_str() );
+	if (!capture) {
+		std::cout<<"Cannot open "<< videos_[video_id].video_file << " !"<<std::endl;
+		return;
+	}
+	int nFrames = (int) cvGetCaptureProperty( capture , CV_CAP_PROP_FRAME_COUNT);
+	*fps = (int) cvGetCaptureProperty(capture, CV_CAP_PROP_FPS);
+	
+	images.resize(nFrames);
+   	
+	for(int i=0;i<nFrames;i++)
+	{
+		images[i] = cvCloneImage( cvQueryFrame(capture));
+	}
+	cvReleaseCapture(&capture);
+}
+
 int video_interface::get_point_id( const std::string & name) const
 {
 	int nb = points_.size();
@@ -391,6 +414,43 @@ bool video_interface::remove_point_to_project(const std::string &name)
 		if (points_[i]==name)
 		{
 			points_.erase(points_.begin()+i);
+		}
+	return true;
+}
+
+bool video_interface::remove_video_to_project(const std::string &name)
+{
+	if (!video_exists(name))
+	{
+		std::cerr<<"The video "<<name<<" does not exist and you try to remove it."<<std::endl;
+		return false;
+	}
+	
+	// remove from the xml
+	tinyxml2::XMLElement * El_video = El_videos_->FirstChildElement ("video");
+	for (El_video; El_video; El_video = El_video->NextSiblingElement ("video"))
+	{
+		tinyxml2::XMLElement * El_name = El_video->FirstChildElement ("video_name");
+		if (!El_name)
+		{
+			std::cerr << " Error cannot find the video_name" << std::endl;
+			exit(0);
+		}
+		
+		std::string tmp = char_to_string(El_name->GetText());
+		if (tmp == name)
+		{
+			El_videos_->DeleteChild (El_video);
+		}
+	}
+	// save the xml
+	save_data();
+	
+	// remove from the list files
+	for (int i=0;i<videos_.size();i++)
+		if (videos_[i].video_name == name)
+		{
+			videos_.erase(videos_.begin()+i);
 		}
 	return true;
 }

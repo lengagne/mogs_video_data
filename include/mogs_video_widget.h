@@ -30,7 +30,6 @@ public:
 
 protected:
     void timerEvent(QTimerEvent*);
-    CvCapture *camera;
 
 private slots:
 
@@ -56,7 +55,9 @@ private:
     bool pause_;
 
     mogs_qt_video_scene *scene;
-    IplImage *image;
+    std::vector<IplImage *> images_;
+    int count_;
+    int video_fps_;
     
     video_interface *project_;
 

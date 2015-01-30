@@ -7,8 +7,8 @@ mogs_qt_list_point::mogs_qt_list_point(QWidget *parent)
 {
 	model = new QStandardItemModel(list_point.size(),3,this); //2 Rows and 3 Columns
 	model->setHorizontalHeaderItem(0, new QStandardItem(QString("Point name")));
-	name = new QStandardItem(QString("Selected Video"));
-	model->setHorizontalHeaderItem(1, name );
+	name_item = new QStandardItem(QString("Selected Video"));
+	model->setHorizontalHeaderItem(1, name_item );
 	QStandardItem * name2 = new QStandardItem(QString("On the frame"));
 	model->setHorizontalHeaderItem(2, name2 );
 	setModel(model);
@@ -42,18 +42,21 @@ void mogs_qt_list_point::mousePressEvent(QMouseEvent *mouseEvent)
 	}
 }
 
-bool mogs_qt_list_point::get_selected_name(QString & name)
+bool mogs_qt_list_point::get_selected_name(QString & video_name)
 {
 	if (select_name =="")
 		return false;
-	name = select_name;
+	video_name = select_name;
 	return true;
 }
 
 void mogs_qt_list_point::set_active_video(QString &video_name)
 {
 	qDebug()<<"SetActiveVideo";
-	name->setText(video_name);
+	qDebug()<<"name_item = "<<name_item;
+	qDebug()<<"video_name = "<<video_name;
+	name_item->setText(video_name);
+	qDebug()<<"SetActiveVideo Done";
 }
 
 void mogs_qt_list_point::set_list(const std::vector<std::string> & list)
@@ -64,6 +67,11 @@ void mogs_qt_list_point::set_list(const std::vector<std::string> & list)
 		delete Items_[i];
 	Items_.clear();
 	model->clear();
+	model->setHorizontalHeaderItem(0, new QStandardItem(QString("Point name")));
+	name_item = new QStandardItem(QString("Selected Video"));
+	model->setHorizontalHeaderItem(1, name_item );
+	QStandardItem * name2 = new QStandardItem(QString("On the frame"));
+	model->setHorizontalHeaderItem(2, name2 );
 	
 	for (int i=0;i<list.size();i++)
 	{

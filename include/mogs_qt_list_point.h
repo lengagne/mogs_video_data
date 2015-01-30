@@ -32,7 +32,7 @@ private:
 	QStandardItemModel *model;
 	QStringList list_point;
 	QString select_name;
-	QStandardItem * name;
+	QStandardItem * name_item;
 	std::vector<QStandardItem *> Items_;
 };
 
