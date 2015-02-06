@@ -15,11 +15,20 @@ mogs_qt_video_scene::~mogs_qt_video_scene()
 
 }
 
+void mogs_qt_video_scene::DrawPoint(	QPointF in,
+					QString name)
+{
+	CvPoint cvin;
+	cvin.x = in.x();
+	cvin.y = in.y();
+	DrawPoint(cvin,name);
+}
+
 void mogs_qt_video_scene::DrawPoint(	CvPoint in,
 					QString name)
 {
 	QPen outlinePen(Qt::red);
-	outlinePen.setWidth(3);
+	outlinePen.setWidth(2);
 	addEllipse(in.x, in.y, 5, 5,outlinePen);
 	
 	if (name != "")
@@ -37,7 +46,7 @@ void mogs_qt_video_scene::DrawRectangle()
     if(rectangle_ready_)
     {
         QPen outlinePen(Qt::black);
-        outlinePen.setWidth(3);
+        outlinePen.setWidth(1);
         if (pressed_point_.x() > 0
                 && pressed_point_.y()>0
                 && pressed_point_.x()< width_
@@ -49,6 +58,8 @@ void mogs_qt_video_scene::DrawRectangle()
 
         rect = addRect(pressed_point_.x(), pressed_point_.y(),
                               released_point_.x()-pressed_point_.x(),released_point_.y() -pressed_point_.y(), outlinePen);
+	
+	DrawPoint( (pressed_point_ + released_point_)/2,"");
     }else if (rectanle_in_progress_)
     {
         if (pressed_point_.x() > 0
@@ -61,9 +72,11 @@ void mogs_qt_video_scene::DrawRectangle()
                 && moving_point_.y()< height_)
         {
             QPen outlinePen(Qt::green);
-            outlinePen.setWidth(3);
+            outlinePen.setWidth(1);
             rect = addRect(pressed_point_.x(), pressed_point_.y(),
                                   moving_point_.x()-pressed_point_.x(),moving_point_.y() -pressed_point_.y(), outlinePen);
+	    
+	    DrawPoint( (pressed_point_ + moving_point_)/2,"");
         }
     }
 }

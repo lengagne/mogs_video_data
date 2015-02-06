@@ -15,6 +15,8 @@ public:
     explicit mogs_qt_video_scene(QWidget *parent = 0);
     ~mogs_qt_video_scene();
 
+    void DrawPoint(QPointF in,QString name= "");
+    
     void DrawPoint(CvPoint in, QString name = "");
     
     void DrawRectangle();

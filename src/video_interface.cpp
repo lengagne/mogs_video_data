@@ -125,22 +125,59 @@ bool video_interface::add_video_to_project(const std::string &file,
 	return true;
 }
 
-void video_interface::edit_data( const std::string &video,
+bool video_interface::edit_data( const std::string &video,
 				const std::string &point_name,
-				const CvPoint & point,
+				 int frame,
+				const CvPoint & point1,
+				const CvPoint & point2,
 				const EditType type)
 {
 	std::cout<<"Push 'n' to see next frame "<<std::endl;
 	std::cout<<"Click on the image to select the point for "<< point_name<<"."<<std::endl;
 	std::cout<<"Draw a rectangle and push 't' in order to do automatic tracking."<<std::endl;
 	std::cout<<"edit_data "<< video<< " "<< point_name<<std::endl;
+	
+	int video_id = get_video_id(video);
+	int point_id = get_point_id(point_name);
+	tinyxml2::XMLElement * el;
+	tinyxml2::XMLText * text;
+	std::string tmp;
+	switch(type)
+	{
+		case(MANUAL):	std::cout<<"Manual editing"<<std::endl;
+				el = point_exists(video,point_name,frame);
+				if (el)
+				{
+					// the point exist : we need to remove it
+					El_datas_->DeleteChild (el);
+				}
+				// add the new point
+				el = doc_.NewElement("data");
+				El_datas_->InsertEndChild (el);
+				el->SetAttribute("frame",frame);
+				el->SetAttribute("video",video.c_str());
+				el->SetAttribute("point",point_name.c_str());
+				el->SetAttribute("source","manual");
+				tmp = double_to_string(point1.x)+ " " + double_to_string(point1.y);
+				text = doc_.NewText (tmp.c_str ());
+				el->InsertEndChild (text);
+				save_data();
+			
+				return false;
+				break;
+		case(TLD):	std::cout<<"TLD editing"<<std::endl;
+		
+				return  false;
+				break;
+	}
+/*	
 // 	read_data();
 	int video_id = get_video_id(video);
 	int point_id = get_point_id(point_name);
 	extractor_ = new video_extractor(video,video_id,point_name,point_id, videos_[video_id].video_file);
 	extractor_->set_data(video_data_);
 	// save the added_point
-	save_data();
+	save_data();*/
 }
 
 void video_interface::get_images(const std::string video_name,
@@ -166,10 +203,10 @@ void video_interface::get_images(const std::string video_name,
 	cvReleaseCapture(&capture);
 }
 
-bool video_interface::get_point( const std::string video_name,
-				 const std::string point_name,
-				int frame,
-				CvPoint& point) const
+bool video_interface::get_point( const std::string &video_name,
+				 const std::string &point_name,
+				 int frame,
+				 CvPoint& point) const
 {
 	int video_id = get_video_id(video_name);
 	int point_id = get_point_id(point_name);
@@ -236,6 +273,24 @@ bool video_interface::point_exists(const std::string & name)
 			return true;
 	}
 	return false;
+}
+
+tinyxml2::XMLElement * video_interface::point_exists(	const std::string & video_name,
+							const std::string & point_name,
+							int frame)
+{
+	tinyxml2::XMLElement * El_data = El_datas_->FirstChildElement ("data");
+	for (El_data; El_data; El_data = El_data->NextSiblingElement ("data"))
+	{
+		int f = string_to_int(El_data->Attribute ("frame"));
+		std::string video = El_data->Attribute ("video");
+		std::string point = El_data->Attribute ("point");
+		if (frame == f && video == video_name && point == point_name)
+		{
+			return El_data;
+		}
+	}
+	return NULL;
 }
 
 bool video_interface::read(const std::string project_name)
@@ -475,21 +530,21 @@ bool video_interface::remove_video_to_project(const std::string &name)
 
 void video_interface::save_data( )
 {
-	std::vector<video_data> new_data;
-	int nb= new_data.size();
-	for (int i=0;i<nb;i++)
-	{
-		// add the data to the xml
-		tinyxml2::XMLElement * data = doc_.NewElement ("data");
-		El_datas_->InsertEndChild (data);
-		data->SetAttribute("frame",new_data[i].frame);
-		data->SetAttribute("video",new_data[i].video.c_str());
-		data->SetAttribute("point",new_data[i].point.c_str());
-		data->SetAttribute("source",new_data[i].source.c_str());
-		std::string tmp = double_to_string(new_data[i].value.x)+ " " + double_to_string(new_data[i].value.y);
-		tinyxml2::XMLText * text = doc_.NewText (tmp.c_str ());
-		data->InsertEndChild (text);
-	}
+// 	std::vector<video_data> new_data;
+// 	int nb= new_data.size();
+// 	for (int i=0;i<nb;i++)
+// 	{
+// 		// add the data to the xml
+// 		tinyxml2::XMLElement * data = doc_.NewElement ("data");
+// 		El_datas_->InsertEndChild (data);
+// 		data->SetAttribute("frame",new_data[i].frame);
+// 		data->SetAttribute("video",new_data[i].video.c_str());
+// 		data->SetAttribute("point",new_data[i].point.c_str());
+// 		data->SetAttribute("source",new_data[i].source.c_str());
+// 		std::string tmp = double_to_string(new_data[i].value.x)+ " " + double_to_string(new_data[i].value.y);
+// 		tinyxml2::XMLText * text = doc_.NewText (tmp.c_str ());
+// 		data->InsertEndChild (text);
+// 	}
 	doc_.SaveFile (project_file_.c_str());
 }
 

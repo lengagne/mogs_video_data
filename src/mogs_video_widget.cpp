@@ -120,12 +120,20 @@ void mogs_video_widget::on_pushButton_clicked()
 	if (scene->get_rectangle_center(Center) && points_name_.size()== 1)
 	{
 		qDebug()<<"Center = "<< Center.x <<" : "<< Center.y;
-		project_->edit_data(video_name_.toStdString(), 
-				    points_name_[0].toStdString(), 
-					Center, MANUAL);
+		while ( project_->edit_data(video_name_.toStdString(), points_name_[0].toStdString(),count_,Center,Center, MANUAL) );
 		// pass to next frame
 		count_ ++;
+		if (project_)
+		{
+			delete project_;
+			project_ = new video_interface();
+			if ( project_->read(project_name.toStdString()))
+				qDebug()<<" Project reading done";
+			else
+				qDebug()<<" Project reading failed";
+		}
 	}
+	qDebug()<<"Manual editing pressed ended";
 }
 
 void mogs_video_widget::on_pushButton_2_clicked()

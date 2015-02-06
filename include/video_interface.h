@@ -56,10 +56,14 @@ class video_interface
 	bool add_video_to_project(const std::string &file,
 				  const std::string &name);
 	
-	/** Edit the project file for point in video **/
-	void edit_data( const std::string &video,
+	/** Edit the project file for point in video 
+	 *  Return false when the editing is finished
+	 **/
+	bool edit_data( const std::string &video,
 			const std::string &point_name,
-			const CvPoint & point,
+			int frame,
+			const CvPoint & point1,
+			const CvPoint & point2,
 			const EditType type);
 	
 	/** Get all the images from the video */
@@ -68,8 +72,8 @@ class video_interface
 			int * fps);
 	
 	/** Return true if the point exists*/
-	bool get_point( const std::string video_name,
-			const std::string point_name,
+	bool get_point( const std::string &video_name,
+			const std::string &point_name,
 			int frame,
 			CvPoint& point) const;
 	
@@ -124,6 +128,12 @@ private:
 	 *	return false if the video does not exists
 	 */
 	bool point_exists(const std::string & name);	
+	
+	/** If a point exist, it returns the xml node
+	 */
+	tinyxml2::XMLElement * point_exists(const std::string & video,
+					    const std::string & point_name,
+						int frame);
 	
 	/** Read the video description in the file */
 	void read_video_description(tinyxml2::XMLElement * El);
