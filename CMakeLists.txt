@@ -24,7 +24,9 @@ set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE})
 
 FIND_PACKAGE(Qt4 REQUIRED)
 find_package( OpenCV REQUIRED )
-find_package( MoGS_Tinyxml REQUIRED )
+if (NOT MoGS_Tinyxml_FOUND)
+  FIND_PACKAGE(MoGS_Tinyxml REQUIRED)
+endif (NOT MoGS_Tinyxml_FOUND)
 
 
 add_subdirectory(3rdparty)
