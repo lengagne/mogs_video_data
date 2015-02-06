@@ -12,7 +12,7 @@ mogs_qt_list_point::mogs_qt_list_point(QWidget *parent)
 	QStandardItem * name2 = new QStandardItem(QString("On the frame"));
 	model->setHorizontalHeaderItem(2, name2 );
 	setModel(model);
-	select_name = "";
+	select_names_.clear();
 }
 
 mogs_qt_list_point::~mogs_qt_list_point()
@@ -25,28 +25,30 @@ mogs_qt_list_point::~mogs_qt_list_point()
 void mogs_qt_list_point::mousePressEvent(QMouseEvent *mouseEvent)
 {
 	QTableView::mousePressEvent(mouseEvent);
-	QModelIndex index;
-	index = currentIndex();
-	int row = index.row();
-
 	if (mouseEvent->button() == Qt::LeftButton)
 	{
-		if (row != -1)
-		{
-			select_name = list_point[row];
+		select_names_.clear();
+		QModelIndexList indexes = selectedIndexes();
+		QModelIndex index;
+		foreach(index, indexes) {
+			int row = index.row();
+			if (row != -1)
+			{
+				select_names_.push_back(list_point[row]);
+			}
 		}
 	}
 	if (mouseEvent->button() == Qt::RightButton)
 	{
-		qDebug()<<"Point Clic on list with right button";
+//		qDebug()<<"Point Clic on list with right button";
 	}
 }
 
-bool mogs_qt_list_point::get_selected_name(QString & video_name)
+bool mogs_qt_list_point::get_selected_name(std::vector<QString> & video_name)
 {
-	if (select_name =="")
+	if (select_names_.size() == 0)
 		return false;
-	video_name = select_name;
+	video_name = select_names_;
 	return true;
 }
 

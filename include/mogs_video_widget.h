@@ -63,7 +63,8 @@ private:
 	
 	video_interface *project_;
 	
-	QString video_name_, point_name_;
+	QString video_name_;
+	std::vector<QString> points_name_;
 	
 	int timer_id_;
 

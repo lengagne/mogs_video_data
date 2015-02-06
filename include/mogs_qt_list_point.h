@@ -15,7 +15,7 @@ public:
 	
 	/** Return true if a point is selected
 	 * and return the name*/
-	bool get_selected_name(QString & name);
+	bool get_selected_name(std::vector<QString> & name);
 
 	void set_active_video(QString &video_name);
 	
@@ -31,7 +31,7 @@ protected:
 private:
 	QStandardItemModel *model;
 	QStringList list_point;
-	QString select_name;
+	std::vector<QString> select_names_;
 	QStandardItem * name_item;
 	std::vector<QStandardItem *> Items_;
 };

@@ -18,6 +18,8 @@ public:
     void DrawPoint(CvPoint in, QString name = "");
     
     void DrawRectangle();
+    
+    bool get_rectangle_center( CvPoint & out);
 
     void set_height(int h)
     {

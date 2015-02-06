@@ -68,6 +68,19 @@ void mogs_qt_video_scene::DrawRectangle()
     }
 }
 
+bool mogs_qt_video_scene::get_rectangle_center( CvPoint & out)
+{
+	QRectF R = rect->rect();
+	QPointF P = R.center();
+	out.x = P.x();
+	out.y = P.y();
+	
+	if ( out.x < 0 || out.x > width_ ||out.y < 0 || out.y > height_)
+		return false;
+	
+	return true;
+}
+
 void mogs_qt_video_scene::mouseMoveEvent(QGraphicsSceneMouseEvent * mouseEvent)
 {
     moving_point_ = mouseEvent->scenePos();

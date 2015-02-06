@@ -114,7 +114,15 @@ void mogs_video_widget::on_play_pause_button_clicked()
 
 void mogs_video_widget::on_pushButton_clicked()
 {
-    qDebug()<<"Manual editing pressed";
+	qDebug()<<"Manual editing pressed";
+	CvPoint Center;
+	if (scene->get_rectangle_center(Center))
+	{
+		qDebug()<<"Center = "<< Center.x <<" : "<< Center.y;
+		
+		// pass to next frame
+		count_ ++;
+	}
 }
 
 void mogs_video_widget::on_pushButton_2_clicked()
@@ -150,9 +158,10 @@ void mogs_video_widget::remove_point()
 {
 	if (project_)
 	{
-		QString name;
-		ui->tableView->get_selected_name(name);
-		project_->remove_point_to_project(name.toStdString());
+		std::vector<QString> names;
+		ui->tableView->get_selected_name(names);
+		for (int i=0;i<names.size();i++)
+			project_->remove_point_to_project(names[i].toStdString());
 		update_list_point();
 	}
 }
@@ -209,11 +218,16 @@ void mogs_video_widget::update_image()
 			
 			IplImage* img = cvCloneImage(images_[count_]);
 			scene->addPixmap(QPixmap::fromImage(ConvertImage(img)));
-			if (ui->tableView->get_selected_name(point_name_))
+			if (ui->tableView->get_selected_name(points_name_))
 			{
+// 				std::cout<<"We plot "<< points_name_.size()<<" points."<<std::endl;
 				CvPoint visu_point;
-				if (project_->get_point(video_name_.toStdString(), point_name_.toStdString(), count_, visu_point))
-					scene->DrawPoint(visu_point,point_name_);
+				for (int i=0;i<points_name_.size();i++)
+					if (project_->get_point(video_name_.toStdString(), points_name_[i].toStdString(), count_, visu_point))
+					{
+// 						std::cout<<"plot point "<< points_name_[i].toStdString() <<std::endl;
+						scene->DrawPoint(visu_point,points_name_[i]);
+					}
 			}
 		}
 	}		
