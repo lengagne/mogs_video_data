@@ -334,6 +334,11 @@ bool video_interface::read_data( )
 	}
 	std::cout<<"number of data = "<< cpt <<std::endl;
 	std::cout<<"number of data = "<< video_data_->get_number_data() <<std::endl;
+	
+	if (cpt>0)
+		return true;
+	else
+		return false;
 }
 
 void video_interface::read_video_description(tinyxml2::XMLElement * El)

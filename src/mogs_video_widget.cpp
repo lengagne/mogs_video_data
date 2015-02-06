@@ -40,7 +40,8 @@ mogs_video_widget::~mogs_video_widget()
 	
 	if (project_)
 	{
-		project_->save_data();
+		if (project_->read_data())	// check if there was no error for reading
+			project_->save_data();
 		delete project_;
 	}
 	std::cout<<"Closing mogs_video_data"<<std::endl;
@@ -223,11 +224,15 @@ void mogs_video_widget::update_image()
 // 				std::cout<<"We plot "<< points_name_.size()<<" points."<<std::endl;
 				CvPoint visu_point;
 				for (int i=0;i<points_name_.size();i++)
-					if (project_->get_point(video_name_.toStdString(), points_name_[i].toStdString(), count_, visu_point))
-					{
+				if (project_->get_point(video_name_.toStdString(), points_name_[i].toStdString(), count_, visu_point))
+				{
 // 						std::cout<<"plot point "<< points_name_[i].toStdString() <<std::endl;
-						scene->DrawPoint(visu_point,points_name_[i]);
-					}
+					scene->DrawPoint(visu_point,points_name_[i]);
+				}else
+				{
+					std::cout<<"no found point "<< points_name_[i].toStdString() <<std::endl;
+				}
+						
 			}
 		}
 	}		
