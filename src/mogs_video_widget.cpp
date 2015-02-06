@@ -115,11 +115,9 @@ void mogs_video_widget::on_play_pause_button_clicked()
 
 void mogs_video_widget::on_pushButton_clicked()
 {
-	qDebug()<<"Manual editing pressed";
 	CvPoint Center;
 	if (scene->get_rectangle_center(Center) && points_name_.size()== 1)
 	{
-		qDebug()<<"Center = "<< Center.x <<" : "<< Center.y;
 		while ( project_->edit_data(video_name_.toStdString(), points_name_[0].toStdString(),count_,Center,Center, MANUAL) );
 		// pass to next frame
 		count_ ++;
@@ -132,8 +130,11 @@ void mogs_video_widget::on_pushButton_clicked()
 			else
 				qDebug()<<" Project reading failed";
 		}
+	}else
+	{
+		qDebug()<<"Manual editing asked but you do not selected one point.";
 	}
-	qDebug()<<"Manual editing pressed ended";
+	
 }
 
 void mogs_video_widget::on_pushButton_2_clicked()
