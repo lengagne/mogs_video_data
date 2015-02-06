@@ -117,10 +117,12 @@ void mogs_video_widget::on_pushButton_clicked()
 {
 	qDebug()<<"Manual editing pressed";
 	CvPoint Center;
-	if (scene->get_rectangle_center(Center))
+	if (scene->get_rectangle_center(Center) && points_name_.size()== 1)
 	{
 		qDebug()<<"Center = "<< Center.x <<" : "<< Center.y;
-		
+		project_->edit_data(video_name_.toStdString(), 
+				    points_name_[0].toStdString(), 
+					Center, MANUAL);
 		// pass to next frame
 		count_ ++;
 	}

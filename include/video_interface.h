@@ -36,6 +36,12 @@ typedef struct
 	double duration;
 }video_description;
 
+enum EditType
+{
+	MANUAL,
+	TLD
+};
+
 class video_interface
 {
       public:
@@ -52,7 +58,9 @@ class video_interface
 	
 	/** Edit the project file for point in video **/
 	void edit_data( const std::string &video,
-			const std::string &point);
+			const std::string &point_name,
+			const CvPoint & point,
+			const EditType type);
 	
 	/** Get all the images from the video */
 	void get_images(const std::string video_name,

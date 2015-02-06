@@ -126,16 +126,18 @@ bool video_interface::add_video_to_project(const std::string &file,
 }
 
 void video_interface::edit_data( const std::string &video,
-				const std::string &point)
+				const std::string &point_name,
+				const CvPoint & point,
+				const EditType type)
 {
 	std::cout<<"Push 'n' to see next frame "<<std::endl;
-	std::cout<<"Click on the image to select the point for "<< point<<"."<<std::endl;
+	std::cout<<"Click on the image to select the point for "<< point_name<<"."<<std::endl;
 	std::cout<<"Draw a rectangle and push 't' in order to do automatic tracking."<<std::endl;
-	std::cout<<"edit_data "<< video<< " "<< point<<std::endl;
+	std::cout<<"edit_data "<< video<< " "<< point_name<<std::endl;
 // 	read_data();
 	int video_id = get_video_id(video);
-	int point_id = get_point_id(point);
-	extractor_ = new video_extractor(video,video_id,point,point_id, videos_[video_id].video_file);
+	int point_id = get_point_id(point_name);
+	extractor_ = new video_extractor(video,video_id,point_name,point_id, videos_[video_id].video_file);
 	extractor_->set_data(video_data_);
 	// save the added_point
 	save_data();
