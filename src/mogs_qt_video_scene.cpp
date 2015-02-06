@@ -81,6 +81,24 @@ void mogs_qt_video_scene::DrawRectangle()
     }
 }
 
+bool mogs_qt_video_scene::get_rectangle( CvPoint& pt1, CvPoint & pt2)
+{
+	QRectF R = rect->rect();
+	QPointF P = R.topLeft ();
+	pt1.x = P.x();
+	pt1.y = P.y();
+	
+	P = R.bottomRight();
+	pt2.x = P.x();
+	pt2.y = P.y();
+	
+	if ( pt1.x < 0 || pt1.x > width_ ||pt1.y < 0 || pt1.y > height_ ||
+		 pt2.x < 0 || pt2.x > width_ ||pt2.y < 0 || pt2.y > height_ )		
+		return false;
+	
+	return true;	
+}
+
 bool mogs_qt_video_scene::get_rectangle_center( CvPoint & out)
 {
 	QRectF R = rect->rect();

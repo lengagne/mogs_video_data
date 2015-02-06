@@ -118,8 +118,7 @@ void mogs_video_widget::on_pushButton_clicked()
 	CvPoint Center;
 	if (scene->get_rectangle_center(Center) && points_name_.size()== 1)
 	{
-		while ( project_->edit_data(video_name_.toStdString(), points_name_[0].toStdString(),count_,Center,Center, MANUAL) );
-		// pass to next frame
+		while ( project_->edit_data(video_name_.toStdString(), points_name_[0].toStdString(),count_,Center,Center, MANUAL_EDITING));
 		count_ ++;
 		if (project_)
 		{
@@ -133,13 +132,46 @@ void mogs_video_widget::on_pushButton_clicked()
 	}else
 	{
 		qDebug()<<"Manual editing asked but you do not selected one point.";
-	}
-	
+	}	
 }
 
 void mogs_video_widget::on_pushButton_2_clicked()
 {
-    qDebug()<<"Automatic editing pressed";
+	qDebug()<<"Automatic editing ";
+	this->setCursor(QCursor(Qt::WaitCursor));
+	CvPoint Pt1,Pt2;
+	if (scene->get_rectangle(Pt1,Pt2) && points_name_.size()== 1)
+	{
+		int mem = count_;
+		while ( project_->edit_data(video_name_.toStdString(), points_name_[0].toStdString(),count_,Pt1,Pt2, TLD_EDITING,images_[count_]))
+		{
+			count_ ++;
+			if (count_ >= images_.size())
+				break;
+// 			update_image();
+// 			if (scene)
+// 			{
+// 				scene->DrawRectangle();
+// 				// scale the video
+// 				ui->OpenCVWindow->fitInView(scene->sceneRect(),Qt::KeepAspectRatio);
+// 			}
+		}
+		count_ = mem;
+		
+		if (project_)
+		{
+			delete project_;
+			project_ = new video_interface();
+			if ( project_->read(project_name.toStdString()))
+				qDebug()<<" Project reading done";
+			else
+				qDebug()<<" Project reading failed";
+		}
+	}else
+	{
+		qDebug()<<"Automatic editing asked but you do not selected one point.";
+	}
+	this->setCursor(QCursor(Qt::ArrowCursor));
 }
 
 void mogs_video_widget::open_project()
@@ -227,23 +259,19 @@ void mogs_video_widget::update_image()
 	{
 		if (scene)
 		{
-			
 			IplImage* img = cvCloneImage(images_[count_]);
 			scene->addPixmap(QPixmap::fromImage(ConvertImage(img)));
 			if (ui->tableView->get_selected_name(points_name_))
 			{
-// 				std::cout<<"We plot "<< points_name_.size()<<" points."<<std::endl;
 				CvPoint visu_point;
 				for (int i=0;i<points_name_.size();i++)
 				if (project_->get_point(video_name_.toStdString(), points_name_[i].toStdString(), count_, visu_point))
 				{
-// 						std::cout<<"plot point "<< points_name_[i].toStdString() <<std::endl;
 					scene->DrawPoint(visu_point,points_name_[i]);
 				}else
 				{
-					std::cout<<"no found point "<< points_name_[i].toStdString() <<std::endl;
+					// std::cout<<"no found point "<< points_name_[i].toStdString() <<std::endl;
 				}
-						
 			}
 		}
 	}		
@@ -270,7 +298,6 @@ void mogs_video_widget::update_list_video()
 		project_ = new video_interface();
 		if (!project_->read(project_name.toStdString()))
 			qDebug()<<" Project reading failed";
-	
 		std::vector<std::string> videos = project_->get_videos_list();
 		ui->listView_2->set_list(videos);	
 	}

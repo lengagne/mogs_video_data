@@ -221,42 +221,42 @@ int video_extractor::edit_data(const std::string& point)
 	return 0;
 }
 
-void video_extractor::play() const
-{
-	IplImage *image;
-   	CvCapture  *capture = cvCaptureFromAVI( video_file_.c_str() );
-	// Vérifier si l'ouverture du flux est ok
-	if (!capture) {
-		std::cout<<"Cannot open "<< video_file_ << " !"<<std::endl;
-		return ;
-	}
-	
-	image = cvQueryFrame(capture);
-	int nFrames = (int) cvGetCaptureProperty( capture , CV_CAP_PROP_FRAME_COUNT);
-	int fps = (int) cvGetCaptureProperty(capture, CV_CAP_PROP_FPS);
-	
-	cvNamedWindow("MoGS_video_tracking", CV_WINDOW_AUTOSIZE);
-	char key;
-	int cpt = 1;
-	int nb_points = video_data_->get_number_of_point();
-	CvPoint visu_point;
-	while(key != 'q' && key != 'Q' && cpt < nFrames) {
-		cpt++;
-		image = cvQueryFrame(capture);
-		
-		for (int i=0;i<nb_points;i++)
-			if (video_data_->get_value(cpt,video_id_, i,visu_point))
-			{
-				cvLine(image, cvPoint(visu_point.x-2, visu_point.y), cvPoint(visu_point.x+2, visu_point.y), cvScalar(255,255,255), 2);
-				cvLine(image, cvPoint(visu_point.x, visu_point.y+2), cvPoint(visu_point.x, visu_point.y-2), cvScalar(255,255,255), 2);
-			}
-
-		cvShowImage( "MoGS_video_tracking", image);
-		key = cvWaitKey(1000./fps);
-	} 
-	cvReleaseCapture(&capture);
-	cvDestroyWindow("MoGS_video_tracking");
-}
+// void video_extractor::play() const
+// {
+// 	IplImage *image;
+//    	CvCapture  *capture = cvCaptureFromAVI( video_file_.c_str() );
+// 	// Vérifier si l'ouverture du flux est ok
+// 	if (!capture) {
+// 		std::cout<<"Cannot open "<< video_file_ << " !"<<std::endl;
+// 		return ;
+// 	}
+// 	
+// 	image = cvQueryFrame(capture);
+// 	int nFrames = (int) cvGetCaptureProperty( capture , CV_CAP_PROP_FRAME_COUNT);
+// 	int fps = (int) cvGetCaptureProperty(capture, CV_CAP_PROP_FPS);
+// 	
+// 	cvNamedWindow("MoGS_video_tracking", CV_WINDOW_AUTOSIZE);
+// 	char key;
+// 	int cpt = 1;
+// 	int nb_points = video_data_->get_number_of_point();
+// 	CvPoint visu_point;
+// 	while(key != 'q' && key != 'Q' && cpt < nFrames) {
+// 		cpt++;
+// 		image = cvQueryFrame(capture);
+// 		
+// 		for (int i=0;i<nb_points;i++)
+// 			if (video_data_->get_value(cpt,video_id_, i,visu_point))
+// 			{
+// 				cvLine(image, cvPoint(visu_point.x-2, visu_point.y), cvPoint(visu_point.x+2, visu_point.y), cvScalar(255,255,255), 2);
+// 				cvLine(image, cvPoint(visu_point.x, visu_point.y+2), cvPoint(visu_point.x, visu_point.y-2), cvScalar(255,255,255), 2);
+// 			}
+// 
+// 		cvShowImage( "MoGS_video_tracking", image);
+// 		key = cvWaitKey(1000./fps);
+// 	} 
+// 	cvReleaseCapture(&capture);
+// 	cvDestroyWindow("MoGS_video_tracking");
+// }
 
 /** Interface*/
 

@@ -52,7 +52,7 @@ class video_extractor
 	/** Edit a new set of data and return the new version of this point */
 	int edit_data(const std::string& point);
 	
-	void play( ) const;
+//	void play( ) const;
 	
 	void set_data(video_extracted_data * in)
 	{
@@ -73,6 +73,5 @@ private:
 	
 	/** Variables for the tld algorithms **/
 	tld::TLD * tld ;
-	
 };
 #endif

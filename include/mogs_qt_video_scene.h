@@ -22,6 +22,8 @@ public:
 	void DrawRectangle();
 
 	bool get_rectangle_center( CvPoint & out);
+	
+	bool get_rectangle( CvPoint& pt1, CvPoint & pt2);
 
 	void set_height(int h)
 	{

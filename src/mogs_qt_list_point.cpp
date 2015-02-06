@@ -5,12 +5,9 @@
 
 mogs_qt_list_point::mogs_qt_list_point(QWidget *parent)
 {
-	model = new QStandardItemModel(list_point.size(),3,this); //2 Rows and 3 Columns
+	model = new QStandardItemModel(list_point.size(),1,this); 
 	model->setHorizontalHeaderItem(0, new QStandardItem(QString("Point name")));
 	name_item = new QStandardItem(QString("Selected Video"));
-	model->setHorizontalHeaderItem(1, name_item );
-	QStandardItem * name2 = new QStandardItem(QString("On the frame"));
-	model->setHorizontalHeaderItem(2, name2 );
 	setModel(model);
 	select_names_.clear();
 }

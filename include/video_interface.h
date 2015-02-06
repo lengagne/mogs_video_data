@@ -24,6 +24,8 @@
 #include "config_Video_data.h"
 #include "video_extracted_data.h"
 #include "video_extractor.h"
+// #include "TLD.h"
+// #include "TLDUtil.h"
 
 typedef struct
 {
@@ -38,8 +40,8 @@ typedef struct
 
 enum EditType
 {
-	MANUAL,
-	TLD
+	MANUAL_EDITING,
+	TLD_EDITING
 };
 
 class video_interface
@@ -64,7 +66,8 @@ class video_interface
 			int frame,
 			const CvPoint & point1,
 			const CvPoint & point2,
-			const EditType type);
+			const EditType type,
+			IplImage *image = NULL);
 	
 	/** Get all the images from the video */
 	void get_images(const std::string video_name,
@@ -162,8 +165,11 @@ private:
 
 	video_extracted_data *video_data_;
 	
-	video_extractor *extractor_;
+//	video_extractor *extractor_;
 	
 	int nb_frames_;		// the minimal number of frames for all the videos
+	
+	/** Variables for the tld algorithms **/
+	tld::TLD * tld_ ;
 };
 #endif

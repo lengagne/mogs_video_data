@@ -19,7 +19,11 @@
 
 #include "video_interface.h"
 
-video_interface::video_interface()
+using namespace tld;
+using namespace cv;
+
+
+video_interface::video_interface():tld_(NULL)
 {
 	nb_frames_ = 1e9;
 }
@@ -126,17 +130,13 @@ bool video_interface::add_video_to_project(const std::string &file,
 }
 
 bool video_interface::edit_data( const std::string &video,
-				const std::string &point_name,
+				 const std::string &point_name,
 				 int frame,
-				const CvPoint & point1,
-				const CvPoint & point2,
-				const EditType type)
+				 const CvPoint & point1,
+				 const CvPoint & point2,
+				 const EditType type,
+				 IplImage *image)
 {
-	std::cout<<"Push 'n' to see next frame "<<std::endl;
-	std::cout<<"Click on the image to select the point for "<< point_name<<"."<<std::endl;
-	std::cout<<"Draw a rectangle and push 't' in order to do automatic tracking."<<std::endl;
-	std::cout<<"edit_data "<< video<< " "<< point_name<<std::endl;
-	
 	int video_id = get_video_id(video);
 	int point_id = get_point_id(point_name);
 	tinyxml2::XMLElement * el;
@@ -144,7 +144,7 @@ bool video_interface::edit_data( const std::string &video,
 	std::string tmp;
 	switch(type)
 	{
-		case(MANUAL):	std::cout<<"Manual editing"<<std::endl;
+		case(MANUAL_EDITING):	std::cout<<"Manual editing"<<std::endl;
 				el = point_exists(video,point_name,frame);
 				if (el)
 				{
@@ -165,19 +165,86 @@ bool video_interface::edit_data( const std::string &video,
 			
 				return false;
 				break;
-		case(TLD):	std::cout<<"TLD editing"<<std::endl;
+		case(TLD_EDITING):	// if the extractor does not exist we create it 
+				if(!image)
+				{
+					std::cout<<"No image loaded"<<std::endl;
+					return false;
+				}
+				if(!tld_)
+				{
+					tld_ = new tld::TLD();
+					int initialBB[4];
+					if (point1.x < point2.x){
+						initialBB[0] = point1.x;
+						initialBB[2] = point2.x - point1.x;
+					}
+					else {
+						initialBB[0] = point2.x;
+						initialBB[2] = point1.x - point2.x;
+					}
+					if (point1.y < point2.y){
+						initialBB[1] = point1.y;
+						initialBB[3] = point2.y - point1.y;
+					}
+					else{
+						initialBB[1] = point2.y;
+						initialBB[3] = point1.y - point2.y;
+					}
+					
+					cv::Mat grey(image->height, image->width, CV_8UC1);
+					cvtColor(cv::cvarrToMat(image), grey, CV_BGR2GRAY);
+
+					tld_->detectorCascade->imgWidth = grey.cols;
+					tld_->detectorCascade->imgHeight = grey.rows;
+					tld_->detectorCascade->imgWidthStep = grey.step;
+					
+					Rect bb = tldArrayToRect(initialBB);
+					printf("Starting at %d %d %d %d\n", bb.x, bb.y, bb.width, bb.height);
+					tld_->selectObject(grey, &bb);
+				}
+				
+				// continue the tld algo
+				tld_->processImage(cvarrToMat(image));
+				if(tld_->currBB != NULL)
+				{
+					printf("%.2d %.2d %.2d %.2d %f\n", tld_->currBB->x, tld_->currBB->y, tld_->currBB->width, tld_->currBB->height, tld_->currConf);
+				}
+				else
+				{
+					printf("NaN NaN NaN NaN NaN\n");
+				}	
+				double threshold = 0.5;
+				if(tld_->currConf >= threshold)
+				{
+					if(tld_->currBB != NULL)
+					{
+						el = point_exists(video,point_name,frame);
+						if (el)
+						{
+							// the point exist : we need to remove it
+							El_datas_->DeleteChild (el);
+						}
+						// add the new point
+						el = doc_.NewElement("data");
+						El_datas_->InsertEndChild (el);
+						el->SetAttribute("frame",frame);
+						el->SetAttribute("video",video.c_str());
+						el->SetAttribute("point",point_name.c_str());
+						el->SetAttribute("source","tld");
+						tmp = double_to_string(tld_->currBB->x+tld_->currBB->width/2)+ " " + double_to_string(tld_->currBB->y+tld_->currBB->height/2);
+						text = doc_.NewText (tmp.c_str ());
+						el->InsertEndChild (text);
+						save_data();
+					}	
+				}
+//				delete tld_;
+//				tld_ = NULL;
+				std::cout<<"TLD editing done"<<std::endl;
 		
-				return  false;
+				return  true;
 				break;
 	}
-/*	
-// 	read_data();
-	int video_id = get_video_id(video);
-	int point_id = get_point_id(point_name);
-	extractor_ = new video_extractor(video,video_id,point_name,point_id, videos_[video_id].video_file);
-	extractor_->set_data(video_data_);
-	// save the added_point
-	save_data();*/
 }
 
 void video_interface::get_images(const std::string video_name,
@@ -255,14 +322,14 @@ void video_interface::new_project(const std::string project_name)
 	dummy = system (command.c_str());
 }
 
-void video_interface::play_video(const std::string &video )
-{
-// 	read_data();
-	int video_id = get_video_id(video);
-	extractor_ = new video_extractor(video,video_id, videos_[video_id].video_file);
-	extractor_->set_data(video_data_);
-	extractor_->play();	
-}
+// void video_interface::play_video(const std::string &video )
+// {
+// // 	read_data();
+// 	int video_id = get_video_id(video);
+// 	extractor_ = new video_extractor(video,video_id, videos_[video_id].video_file);
+// 	extractor_->set_data(video_data_);
+// 	extractor_->play();	
+// }
 
 bool video_interface::point_exists(const std::string & name)
 {
