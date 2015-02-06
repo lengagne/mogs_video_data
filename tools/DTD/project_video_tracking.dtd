@@ -23,7 +23,6 @@
 	frame CDATA #REQUIRED
 	video CDATA #REQUIRED
 	point CDATA #REQUIRED
-	version CDATA #REQUIRED
 	source (manual|tld) #REQUIRED
 	>
 

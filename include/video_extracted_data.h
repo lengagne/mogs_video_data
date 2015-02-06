@@ -33,7 +33,6 @@ typedef struct
 	int video_id;
 	std::string point;
 	int point_id;
-	int version;
 	std::string source;
 	CvPoint value;
 }video_data;
@@ -46,7 +45,6 @@ inline std::ostream & operator<< (std::ostream & output,
 	output << "\tvideo_id = " << in.video_id << std::endl;
 	output << "\tpoint = " << in.point << std::endl;
 	output << "\tpoint_id = " << in.point_id << std::endl;
-	output << "\tversion = " << in.version << std::endl;
 	output << "\tsource = " << in.source << std::endl;
 	output << "\tvalue = " << in.value.x<<" : "<< in.value.y << std::endl;	
 	return output;
@@ -60,11 +58,6 @@ class video_extracted_data
 	~video_extracted_data ();
 	
 	void add_data(const video_data& in);
-	
-	int get_next_version()const;
-	
-	void get_new_version_data(int version,
-				  std::vector<video_data> & datas) const;
 	
 	int get_number_data() const
 	{

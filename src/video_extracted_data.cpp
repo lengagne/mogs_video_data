@@ -46,29 +46,6 @@ void video_extracted_data::add_data(const video_data& in)
 	}
 }
 
-int video_extracted_data::get_next_version()const
-{
-	int num = -1;
-	int nb = datas_.size();
-	// test if we update the value or add a new one
-	for (int i=0;i<nb;i++)
-		if (datas_[i].version > num )
-		{
-			num = datas_[i].version;
-		}
-		
-	return num+1;	
-}
-
-void video_extracted_data::get_new_version_data(int version,
-						std::vector<video_data> & datas) const
-{
-	int nb = datas_.size();
-	for (int i=0;i<nb;i++)
-		if(datas_[i].version == version)
-			datas.push_back(datas_[i]);
-}
-
 int video_extracted_data::get_number_of_point() const
 {
 	int nb_point= 0 ;
@@ -84,22 +61,18 @@ bool video_extracted_data::get_value ( 	int frame,
 					int point_id,
 					CvPoint & val) const
 {
-	int version = -1;
 	int nb = datas_.size();
 	for (int i=0;i<nb;i++)
 	{
 		if ( datas_[i].frame == frame
 			&& datas_[i].video_id == video_id
-			&& datas_[i].point_id == point_id
-			&& datas_[i].version > version)
+			&& datas_[i].point_id == point_id)
 		{
-			version = datas_[i].version;
 			val = datas_[i].value;
 			return true;
 		}
 	}
-	if (version ==-1)
-		return false;
+	return false;
 }
 
 bool video_extracted_data::updatable( 	const video_data& a,
@@ -110,8 +83,6 @@ bool video_extracted_data::updatable( 	const video_data& a,
 	if (a.video_id != b.video_id)
 		return false;
 	if (a.point_id != b.point_id)
-		return false;
-	if (a.version > b.version)
 		return false;
 	return true;
 }

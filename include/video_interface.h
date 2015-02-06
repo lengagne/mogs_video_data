@@ -93,7 +93,7 @@ class video_interface
 	bool remove_video_to_project(const std::string &name);
 	
 	/** Save the new selected values **/
-	void save_data(int version =-1);
+	void save_data();
 	
 	/** Show the details of a project **/
 	void show() const;

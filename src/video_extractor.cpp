@@ -78,13 +78,11 @@ int video_extractor::edit_data(const std::string& point)
 	char key;
 	int cpt = 0;
 	CvPoint visu_point;
-	int version = video_data_->get_next_version();
 	bool tld_mode = false;
 	bool update_image = false;
 	do {
 		if (update_image)
 			image = cvQueryFrame(capture);
-		// plot last point version
 		update_image = true;
 		IplImage * image2 = cvCloneImage(image);
 		key = 0;
@@ -207,7 +205,6 @@ int video_extractor::edit_data(const std::string& point)
 			tmp.video_id = video_id_;
 			tmp.point = point_;
 			tmp.point_id = point_id_;
-			tmp.version = version;
 			if (tld_mode)
 				tmp.source = "tld";
 			else
@@ -221,7 +218,7 @@ int video_extractor::edit_data(const std::string& point)
 	} while(key != 'q' && key != 'Q' && cpt < nFrames);
 	cvReleaseCapture(&capture);
 	cvDestroyWindow("MoGS_video_tracking");
-	return version;
+	return 0;
 }
 
 void video_extractor::play() const
