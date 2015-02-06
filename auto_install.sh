@@ -2,7 +2,7 @@
 
 sudo apt-get update 
 
-sudo apt-get install cmake g++ libboost-all-dev libcv-dev libhighgui-dev libcvaux-dev libopencv-gpu-dev
+sudo apt-get install cmake g++ libboost-all-dev libcv-dev libhighgui-dev libcvaux-dev libopencv-gpu-dev qt4-dev-tools
 
 mkdir auto_install 
 
