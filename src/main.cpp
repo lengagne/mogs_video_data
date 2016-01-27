@@ -219,10 +219,32 @@
 #include <QtGui/QApplication>
 #include "mogs_video_widget.h"
 
+class SafeApplication: public QApplication
+{
+public:
+	SafeApplication (int & argc, char ** argv, Type type = GuiClient)
+    : QApplication (argc, argv, type)
+	{
+	
+	}
+
+	bool notify(QObject *receiver_, QEvent *event_)
+	{
+		try
+		{
+			return QApplication::notify(receiver_, event_);
+		}
+		catch (std::exception &ex)
+		{
+			std::cerr << "std::exception was caught : "<< ex.what() << std::endl;
+		}
+		return false;
+	}
+};
 
 int main(int argc, char *argv[])
 {
-	QApplication a(argc, argv);
+	SafeApplication a(argc, argv);
 	mogs_video_widget w;
 	w.show();
 	

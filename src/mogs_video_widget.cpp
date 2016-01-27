@@ -69,7 +69,16 @@ void mogs_video_widget::add_video()
 	window->set_path_and_name(&video_file,&video_name_);
 	window->show();
 	window->exec();
-	project_->add_video_to_project(video_file.toStdString(), video_name_.toStdString());
+	if (video_name_.toStdString() == "")
+	{
+		std::cout<<"Please specify a video name"<<std::endl;
+	}else if (project_)
+	{
+		project_->add_video_to_project(video_file.toStdString(), video_name_.toStdString());
+		
+	}
+	else
+		std::cout<<"Please open project first "<<std::endl;
 	update_list_video();
 }
 
