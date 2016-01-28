@@ -91,7 +91,11 @@ void mogs_video_widget::new_project()
 	window->exec();
 	QString total = path + "/" + project_name;
 	project_ = new video_interface ();
-	project_->new_project(total.toStdString());
+	project_name = project_->new_project(total.toStdString());
+	if ( project_->read(project_name.toStdString()))
+		qDebug()<<" Project reading done";
+	else
+		qDebug()<<" Project reading failed";
 }
 
 void mogs_video_widget::on_listView_2_clicked(const QModelIndex &index)

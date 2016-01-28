@@ -306,20 +306,23 @@ std::vector<std::string>  video_interface::get_videos_list()
 	return out;
 }
 
-void video_interface::new_project(const std::string project_name)
+QString video_interface::new_project(const std::string project_name)
 {   
 	project_file_ = project_name + ".xml";
 	if(fopen(project_file_.c_str(),"r")) {
 		std::cerr<<"This project already exists !!"<<std::endl;
-		return;
+		return "";
 	}	
+	
 	// test if the file already exists.
-	std::string command = "mkdir videos_"+project_name;
-	int dummy = system(command.c_str());
+/*	std::string command = "mkdir videos_"+project_name;
+	int dummy = system(command.c_str());*/
 	int lastindex = project_name.find_last_of("."); 
 	std::string rawname = project_name.substr(0, lastindex); 
-	command = "cp /usr/local/share/MoGS/templates/mogs_project_video_tracking.xml " + rawname +".xml";
-	dummy = system (command.c_str());
+	std::string command = "cp /usr/local/share/MoGS/templates/mogs_project_video_tracking.xml " + rawname +".xml";
+	int dummy = system (command.c_str());
+	
+	return QString::fromStdString(project_file_);
 }
 
 // void video_interface::play_video(const std::string &video )

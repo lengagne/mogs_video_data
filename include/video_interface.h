@@ -24,8 +24,7 @@
 #include "config_Video_data.h"
 #include "video_extracted_data.h"
 #include "video_extractor.h"
-// #include "TLD.h"
-// #include "TLDUtil.h"
+#include <QString>
 
 typedef struct
 {
@@ -89,8 +88,8 @@ class video_interface
 	/** Return the list of the existing points **/
 	std::vector<std::string>  get_videos_list();
 	
-	/** Create a new project **/
-	void new_project(const std::string project_name);
+	/** Create a new project and return the name of the file**/
+	QString new_project(const std::string project_name);
 	
 	/** Visualize the video **/
 	void play_video(const std::string &video);
