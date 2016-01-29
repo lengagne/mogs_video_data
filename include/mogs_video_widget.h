@@ -45,6 +45,7 @@ private slots:
 	void remove_video();
 	void scroll_bar(int value);
 	void export_video();
+	void export_txt();
 
 
 private:

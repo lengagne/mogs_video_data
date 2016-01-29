@@ -210,7 +210,6 @@
     <property name="title">
      <string>menu</string>
     </property>
-    <addaction name="separator"/>
     <addaction name="actionNouveau_projet"/>
     <addaction name="actionOuvrir_projet"/>
     <addaction name="separator"/>
@@ -221,6 +220,8 @@
     <addaction name="actionSupprimer_video"/>
     <addaction name="separator"/>
     <addaction name="actionExporter_video"/>
+    <addaction name="actionExporter_donn_es"/>
+    <addaction name="separator"/>
     <addaction name="actionFermer_2"/>
    </widget>
    <addaction name="menuMenu"/>
@@ -282,6 +283,11 @@
   <action name="actionExporter_video">
    <property name="text">
     <string>Exporter video</string>
+   </property>
+  </action>
+  <action name="actionExporter_donn_es">
+   <property name="text">
+    <string>Exporter données</string>
    </property>
   </action>
  </widget>

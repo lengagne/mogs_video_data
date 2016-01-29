@@ -5,6 +5,7 @@
 #include <QDebug>
 #include <QStringListModel>
 #include <unistd.h>
+#include <fstream>
 #include "qt_get_point_name.h"
 #include "qt_rep_name.h"
 
@@ -22,7 +23,8 @@ mogs_video_widget::mogs_video_widget(QWidget *parent) : QMainWindow(parent),
 	connect(ui->actionSupprimer_video, SIGNAL(triggered()), this, SLOT(remove_video()));
 	connect(ui->actionSupprimer_video, SIGNAL(triggered()), this, SLOT(remove_video()));
 	connect(ui->actionExporter_video, SIGNAL(triggered()), this, SLOT(export_video()));
-
+	connect(ui->actionExporter_donn_es, SIGNAL(triggered()), this, SLOT(export_txt()));	
+	
 	ui->horizontalScrollBar->setMaximum(1000);
 	ui->horizontalScrollBar->setSliderPosition(0);
 
@@ -34,6 +36,8 @@ mogs_video_widget::mogs_video_widget(QWidget *parent) : QMainWindow(parent),
 
 	timer_id_ = startTimer(100);
 	pause_ = true;
+	
+	count_ = 0;
 }
 
 mogs_video_widget::~mogs_video_widget()
@@ -82,6 +86,40 @@ void mogs_video_widget::add_video()
 	else
 		std::cout<<"Please open project first "<<std::endl;
 	update_list_video();
+}
+
+
+void mogs_video_widget::export_txt()
+{
+	std::ofstream myfile;
+	myfile.open ("mogs_video_data_exported.txt");
+	myfile << "NbFrame\tTime\t";
+	if (ui->tableView->get_selected_name(points_name_))
+	for (int i=0;i<points_name_.size();i++)
+		myfile<<"\t"<<points_name_[i].toStdString()+".X"<<"\t"<<points_name_[i].toStdString()+".Y";
+	myfile<<std::endl;
+		
+	for (count_=0;count_<images_.size();count_++)
+	{
+		myfile<<count_<<"\t"<<count_*1./video_fps_ ;
+		if (ui->tableView->get_selected_name(points_name_))
+		{
+			CvPoint visu_point;
+			for (int i=0;i<points_name_.size();i++)
+				if (project_->get_point(video_name_.toStdString(), points_name_[i].toStdString(), count_, visu_point))
+				{
+					scene->DrawPoint(visu_point,points_name_[i]);
+					myfile<<"\t"<<visu_point.x<<"\t"<<visu_point.y;
+				}else
+				{
+					// std::cout<<"no found point "<< points_name_[i].toStdString() <<std::endl;
+					myfile<<"\t?\t?";
+				}
+			myfile<<std::endl;
+		}		
+	}	
+	myfile.close();
+	std::cout<<std::endl<<"Text exported"<<std::endl;
 }
 
 void mogs_video_widget::export_video()
