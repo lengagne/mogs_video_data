@@ -91,14 +91,23 @@ void mogs_video_widget::add_video()
 
 void mogs_video_widget::export_txt()
 {
+	qt_rep_name *window = new qt_rep_name();
+	QString path, text_name;
+	window->set_path_and_name(&path,&text_name);
+	window->show();
+	window->exec();
+	QString name = path + "/" + text_name;
+	
+	
 	std::ofstream myfile;
-	myfile.open ("mogs_video_data_exported.txt");
+	myfile.open (name.toStdString());
 	myfile << "NbFrame\tTime\t";
 	if (ui->tableView->get_selected_name(points_name_))
 	for (int i=0;i<points_name_.size();i++)
 		myfile<<"\t"<<points_name_[i].toStdString()+".X"<<"\t"<<points_name_[i].toStdString()+".Y";
 	myfile<<std::endl;
-		
+	int w = scene->get_width()/2;
+	int h = scene->get_height()/2;
 	for (count_=0;count_<images_.size();count_++)
 	{
 		myfile<<count_<<"\t"<<count_*1./video_fps_ ;
@@ -109,7 +118,7 @@ void mogs_video_widget::export_txt()
 				if (project_->get_point(video_name_.toStdString(), points_name_[i].toStdString(), count_, visu_point))
 				{
 					scene->DrawPoint(visu_point,points_name_[i]);
-					myfile<<"\t"<<visu_point.x<<"\t"<<visu_point.y;
+					myfile<<"\t"<<(1.0*visu_point.x - w)/(w)<<"\t"<<(1.0*visu_point.y-h)/h;
 				}else
 				{
 					// std::cout<<"no found point "<< points_name_[i].toStdString() <<std::endl;
@@ -124,13 +133,20 @@ void mogs_video_widget::export_txt()
 
 void mogs_video_widget::export_video()
 {
+	qt_rep_name *window = new qt_rep_name();
+	QString path, video_name;
+	window->set_path_and_name(&path,&video_name);
+	window->show();
+	window->exec();
+	QString name = path + "/" + video_name;
+	
 	if (!scene)
 	{
 		std::cerr<<"Error in export_video"<<std::endl;
 		return;
 	}
 	
-	const std::string NAME = "mogs_video_tracking_exported.avi";
+	const std::string NAME = name.toStdString();
     cv::VideoWriter outputVideo(NAME, CV_FOURCC('D','I','V','3') , video_fps_, cv::Size(scene->get_width(), scene->get_height()), true);
     if (!outputVideo.isOpened())
     {
