@@ -35,6 +35,12 @@ public:
 		width_ = w;
 	}
 
+	int get_height(){
+		return height_;
+	}
+	int get_width(){
+		return width_;
+	}
 signals:
 
 public slots:

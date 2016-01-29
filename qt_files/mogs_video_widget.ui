@@ -203,7 +203,7 @@
      <x>0</x>
      <y>0</y>
      <width>677</width>
-     <height>22</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuMenu">
@@ -220,6 +220,7 @@
     <addaction name="actionSupprimer_point"/>
     <addaction name="actionSupprimer_video"/>
     <addaction name="separator"/>
+    <addaction name="actionExporter_video"/>
     <addaction name="actionFermer_2"/>
    </widget>
    <addaction name="menuMenu"/>
@@ -276,6 +277,11 @@
   <action name="actionOuvrir_projet">
    <property name="text">
     <string>Ouvrir projet</string>
+   </property>
+  </action>
+  <action name="actionExporter_video">
+   <property name="text">
+    <string>Exporter video</string>
    </property>
   </action>
  </widget>

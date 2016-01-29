@@ -44,6 +44,7 @@ private slots:
 	void remove_point();
 	void remove_video();
 	void scroll_bar(int value);
+	void export_video();
 
 
 private:

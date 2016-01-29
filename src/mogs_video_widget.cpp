@@ -4,6 +4,7 @@
 #include <iostream>
 #include <QDebug>
 #include <QStringListModel>
+#include <unistd.h>
 #include "qt_get_point_name.h"
 #include "qt_rep_name.h"
 
@@ -19,7 +20,8 @@ mogs_video_widget::mogs_video_widget(QWidget *parent) : QMainWindow(parent),
 	connect(ui->actionAjouter_video, SIGNAL(triggered()), this, SLOT(add_video()));
 	connect(ui->actionSupprimer_point, SIGNAL(triggered()), this, SLOT(remove_point()));
 	connect(ui->actionSupprimer_video, SIGNAL(triggered()), this, SLOT(remove_video()));
-	connect(ui->actionFermer_2, SIGNAL(triggered()), this, SLOT(close()));
+	connect(ui->actionSupprimer_video, SIGNAL(triggered()), this, SLOT(remove_video()));
+	connect(ui->actionExporter_video, SIGNAL(triggered()), this, SLOT(export_video()));
 
 	ui->horizontalScrollBar->setMaximum(1000);
 	ui->horizontalScrollBar->setSliderPosition(0);
@@ -80,6 +82,38 @@ void mogs_video_widget::add_video()
 	else
 		std::cout<<"Please open project first "<<std::endl;
 	update_list_video();
+}
+
+void mogs_video_widget::export_video()
+{
+	if (!scene)
+	{
+		std::cerr<<"Error in export_video"<<std::endl;
+		return;
+	}
+	
+	const std::string NAME = "mogs_video_tracking_exported.avi";
+    cv::VideoWriter outputVideo(NAME, CV_FOURCC('D','I','V','3') , video_fps_, cv::Size(scene->get_width(), scene->get_height()), true);
+    if (!outputVideo.isOpened())
+    {
+        std::cerr  << "Could not open the output video for write: "<< NAME<< std::endl;
+        return ;
+    }
+	
+	for (count_=0;count_<images_.size();count_++)
+	{
+		update_image();
+			QImage image(scene->sceneRect().size().toSize(), QImage::Format_ARGB32); 
+			QPainter painter(&image);
+			scene->render(&painter);
+			image.save("file_name.jpg");
+			cv::Mat  res;
+			res = cv::imread("file_name.jpg", CV_LOAD_IMAGE_COLOR);
+			outputVideo.write(res);
+			std::cout<<"adding image "<< count_ <<" / "<< images_.size() <<"\r";
+	}	
+	int dummy = system("rm file_name.jpg");
+	std::cout<<std::endl<<"Video exported"<<std::endl;
 }
 
 void mogs_video_widget::new_project()
@@ -161,13 +195,6 @@ void mogs_video_widget::on_pushButton_2_clicked()
 			count_ ++;
 			if (count_ >= images_.size())
 				break;
-// 			update_image();
-// 			if (scene)
-// 			{
-// 				scene->DrawRectangle();
-// 				// scale the video
-// 				ui->OpenCVWindow->fitInView(scene->sceneRect(),Qt::KeepAspectRatio);
-// 			}
 		}
 		count_ = mem;
 		
@@ -287,7 +314,7 @@ void mogs_video_widget::update_image()
 				}
 			}
 		}
-	}		
+	}
 }
 
 void mogs_video_widget::update_list_point()

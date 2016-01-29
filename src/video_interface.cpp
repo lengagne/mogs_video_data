@@ -325,15 +325,6 @@ QString video_interface::new_project(const std::string project_name)
 	return QString::fromStdString(project_file_);
 }
 
-// void video_interface::play_video(const std::string &video )
-// {
-// // 	read_data();
-// 	int video_id = get_video_id(video);
-// 	extractor_ = new video_extractor(video,video_id, videos_[video_id].video_file);
-// 	extractor_->set_data(video_data_);
-// 	extractor_->play();	
-// }
-
 bool video_interface::point_exists(const std::string & name)
 {
 	int nb = points_.size();

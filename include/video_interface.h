@@ -91,9 +91,6 @@ class video_interface
 	/** Create a new project and return the name of the file**/
 	QString new_project(const std::string project_name);
 	
-	/** Visualize the video **/
-	void play_video(const std::string &video);
-	
 	/** read a project and return false in case of trouble */
 	bool read(const std::string project_name);
 	
@@ -164,8 +161,7 @@ private:
 
 	video_extracted_data *video_data_;
 	
-//	video_extractor *extractor_;
-	
+
 	int nb_frames_;		// the minimal number of frames for all the videos
 	
 	/** Variables for the tld algorithms **/
