@@ -146,7 +146,12 @@ void mogs_video_widget::export_video()
 		return;
 	}
 	
-	const std::string NAME = name.toStdString();
+	std::string NAME = name.toStdString();
+	if(NAME.substr(NAME.find_last_of(".") + 1) != "avi") {
+		NAME += ".avi";
+	} 
+	std::cout<<"Export video to "<< NAME <<std::endl;  
+  
     cv::VideoWriter outputVideo(NAME, CV_FOURCC('D','I','V','3') , video_fps_, cv::Size(scene->get_width(), scene->get_height()), true);
     if (!outputVideo.isOpened())
     {
