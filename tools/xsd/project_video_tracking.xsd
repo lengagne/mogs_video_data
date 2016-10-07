@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:element name="Joysticks">
+<xs:complexType>
+	<xs:sequence >
+		<xs:element name="Joystick" minOccurs="0" maxOccurs="1"/>
+	</xs:sequence>
+</xs:complexType>
+</xs:element>
+
+<xs:element name="project">
+	<xs:complexType>
+		<xs:sequence>
+			<xs:element name="Definitions"/>
+			<xs:element name="Datas"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:element>
+
+<xs:element name="Definitions">
+	<xs:complexType>
+		<xs:sequence>
+			<xs:element name="videos"/>
+			<xs:element name="points"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:element>
+
+
+
+</xs:schema>
+
+
+<!---->
+<!---->
+<!--<!ELEMENT project (Definitions,Datas)>-->
+<!---->
+<!--<!ELEMENT Definitions (videos,points)>-->
+<!---->
+<!--<!ELEMENT videos (video*)>-->
+<!--<!ELEMENT points (point*)>-->
+<!---->
+<!--<!ELEMENT Datas (data*)>-->
+<!---->
+<!--<!ELEMENT video (video_name,video_file,width,height,fps,nb_frames,duration)>-->
+<!---->
+<!--<!ELEMENT video_name (#PCDATA)>-->
+<!--<!ELEMENT video_file (#PCDATA)>-->
+<!--<!ELEMENT width (#PCDATA)>-->
+<!--<!ELEMENT height (#PCDATA)>-->
+<!--<!ELEMENT fps (#PCDATA)>-->
+<!--<!ELEMENT nb_frames (#PCDATA)>-->
+<!--<!ELEMENT duration (#PCDATA)>-->
+<!---->
+<!--<!ELEMENT point (#PCDATA)>-->
+<!---->
+<!--<!ATTLIST data-->
+<!--	frame CDATA #REQUIRED-->
+<!--	video CDATA #REQUIRED-->
+<!--	point CDATA #REQUIRED-->
+<!--	source (manual|tld) #REQUIRED-->
+<!--	>-->
+<!---->
+<!--<!ELEMENT data (#PCDATA)>-->

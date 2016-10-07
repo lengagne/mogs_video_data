@@ -4,7 +4,7 @@
 #define VERSION_MAJOR 
 #define VERSION_MINOR 
 
-#define DTD_REPOSITORY "/usr/local//share/MoGS/DTD"
-#define CONFIG_REPOSITORY "/usr/local//share/MoGS"
+#define XSD_REPOSITORY "/usr/local//share/mogs2/xsd"
+#define CONFIG_REPOSITORY "/usr/local//share/xsd"
 
 #endif

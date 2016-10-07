@@ -46,13 +46,13 @@ QString mogs_qt_list_video::get_active_video_name()
     return active_video_;
 }
 
-void mogs_qt_list_video::set_list(const std::vector<std::string> & list)
+void mogs_qt_list_video::set_list(const std::vector<QString> & list)
 {
 	list_video.clear();
 	model_video->removeRows(0,model_video->rowCount());
 	for (int i=0;i<list.size();i++)
 	{
-		list_video << list[i].c_str();
+		list_video << list[i];
 	}
-	model_video->setStringList(list_video);	
+	model_video->setStringList(list_video);
 }

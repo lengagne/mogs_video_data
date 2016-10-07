@@ -18,8 +18,8 @@ public:
 
 	QString get_active_video_name();
 
-	void set_list(const std::vector<std::string> &list);
-    
+	void set_list(const std::vector<QString> &list);
+
 signals:
 
 public slots:

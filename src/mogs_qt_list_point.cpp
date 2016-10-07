@@ -5,7 +5,7 @@
 
 mogs_qt_list_point::mogs_qt_list_point(QWidget *parent)
 {
-	model = new QStandardItemModel(list_point.size(),1,this); 
+	model = new QStandardItemModel(list_point.size(),1,this);
 	model->setHorizontalHeaderItem(0, new QStandardItem(QString("Point name")));
 	name_item = new QStandardItem(QString("Selected Video"));
 	setModel(model);
@@ -58,7 +58,7 @@ void mogs_qt_list_point::set_active_video(QString &video_name)
 	qDebug()<<"SetActiveVideo Done";
 }
 
-void mogs_qt_list_point::set_list(const std::vector<std::string> & list)
+void mogs_qt_list_point::set_list(const std::vector<QString> & list)
 {
 	// Remove previous list
 	list_point.clear();
@@ -71,11 +71,11 @@ void mogs_qt_list_point::set_list(const std::vector<std::string> & list)
 	model->setHorizontalHeaderItem(1, name_item );
 	QStandardItem * name2 = new QStandardItem(QString("On the frame"));
 	model->setHorizontalHeaderItem(2, name2 );
-	
+
 	for (int i=0;i<list.size();i++)
 	{
-		list_point << list[i].c_str();
-		QStandardItem *currentItem = new QStandardItem(QString(list[i].c_str()));
+		list_point << list[i];
+		QStandardItem *currentItem = new QStandardItem(list[i]);
 		model->setItem(i,0,currentItem);
 		model->setItem(i,1,new QStandardItem(QString("no")));
 		model->setItem(i,2,new QStandardItem(QString("no")));

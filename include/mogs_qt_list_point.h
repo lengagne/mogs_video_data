@@ -12,14 +12,14 @@ class mogs_qt_list_point : public QTableView
 public:
 	explicit mogs_qt_list_point(QWidget *parent = 0);
 	~mogs_qt_list_point();
-	
+
 	/** Return true if a point is selected
 	 * and return the name*/
 	bool get_selected_name(std::vector<QString> & name);
 
 	void set_active_video(QString &video_name);
-	
-	void set_list(const std::vector<std::string> &list);
+
+	void set_list(const std::vector<QString> &list);
 
 signals:
 

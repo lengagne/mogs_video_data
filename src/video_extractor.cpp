@@ -1,16 +1,16 @@
 //      video_extractor.cpp
 //      Copyright (C) 2014 lengagne (sebastien.lengagne@univ-bpclermont.fr)
-// 
+//
 //      This program is free software: you can redistribute it and/or modify
 //      it under the terms of the GNU General Public License as published by
 //      the Free Software Foundation, either version 3 of the License, or
 //      (at your option) any later version.
-// 
+//
 //      This program is distributed in the hope that it will be useful,
 //      but WITHOUT ANY WARRANTY; without even the implied warranty of
 //      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //      GNU General Public License for more details.
-// 
+//
 //      You should have received a copy of the GNU General Public License
 //      along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
@@ -22,44 +22,44 @@
 using namespace tld;
 using namespace cv;
 
-video_extractor::video_extractor (	const std::string & video,
+video_extractor::video_extractor (	const QString & video,
 					int video_id,
-					const std::string& video_file)
+					const QString& video_file)
 :video_(video),video_id_(video_id),point_("not_defined"),point_id_(-1), video_file_(video_file)
 {
-	
+
 }
 
-video_extractor::video_extractor (	const std::string & video,
+video_extractor::video_extractor (	const QString & video,
 					int video_id,
-					const std::string & point,
+					const QString & point,
 					int point_id,
-					const std::string& video_file)
+					const QString& video_file)
 :video_(video),video_id_(video_id),point_(point),point_id_(point_id), video_file_(video_file)
 {
-	
+
 }
 
 video_extractor::~video_extractor()
 {
-	
+
 }
 
-int video_extractor::edit_data(const std::string& point)
+int video_extractor::edit_data(const QString& point)
 {
 	std::cout<<"video_extractor::edit_data"<<std::endl;
 	IplImage *image;
-   	CvCapture  *capture = cvCaptureFromAVI( video_file_.c_str() );
+   	CvCapture  *capture = cvCaptureFromAVI( video_file_.toStdString().c_str() );
 	if (!capture) {
-		std::cout<<"Cannot open "<< video_file_ << " !"<<std::endl;
+		qDebug()<<"Cannot open "<< video_file_ << " !";
 		return -1;
 	}
-	
+
 	image = cvQueryFrame(capture);
 	int nFrames = (int) cvGetCaptureProperty( capture , CV_CAP_PROP_FRAME_COUNT);
 	int fps = (int) cvGetCaptureProperty(capture, CV_CAP_PROP_FPS);
-	
-	CvPoint Pt1,Pt2,center;	
+
+	CvPoint Pt1,Pt2,center;
 	bool rect_set;
 	rect_set = false;
 	data_mouse d;
@@ -67,12 +67,12 @@ int video_extractor::edit_data(const std::string& point)
 	d.Pt1 = &Pt1;
 	d.Pt2 = &Pt2;
 	d.rect_set = &rect_set;
-	
+
 	CvScalar black = CV_RGB(0, 0, 0);
 	CvScalar white = CV_RGB(255, 255, 255);
 	CvFont font;
 	cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX, .5, .5, 0, 1, 8);
-	
+
 	cvNamedWindow("MoGS_video_tracking", CV_WINDOW_AUTOSIZE);
 	setMouseCallback("MoGS_video_tracking", PositionCurseur, (void*) &d);
 	char key;
@@ -89,32 +89,32 @@ int video_extractor::edit_data(const std::string& point)
 		if (!tld_mode)	while (key != 'n' && key != 'q' && key != 'Q' && key != 't')
 		{
 			IplImage * image2 = cvCloneImage(image);
-			std::string tmp = "frame " +double_to_string(cpt) + "/" + double_to_string(nFrames) ;			
+			QString tmp = "frame " + QString::number(cpt) + "/" + QString::number(nFrames) ;
 			if (rect_set)
 			{
 				if ( (Pt1.x - Pt2.x) > 5 || (Pt1.x - Pt2.x) < -5 || (Pt1.y - Pt2.y) > 5 || (Pt1.y - Pt2.y) < -5)
 				{
-					tmp = tmp +" selected rectangle center : " + double_to_string(Pt1.x) + " : " + double_to_string(Pt1.y);
+					tmp = tmp +" selected rectangle center : " + QString::number(Pt1.x) + " : " + QString::number(Pt1.y);
 					center.x = (Pt1.x + Pt2.x )/2;
 					center.y = (Pt1.y + Pt2.y )/2;
 					cvRectangle(image2, Pt1, Pt2, CV_RGB(255, 255, 255), 1);
 				}else
 				{
 					center = Pt1;
-					tmp = tmp +" selected point: " + double_to_string(Pt1.x) + " : " + double_to_string(Pt1.y);
+					tmp = tmp +" selected point: " + QString::number(Pt1.x) + " : " + QString::number(Pt1.y);
 				}
 				cvLine(image2, cvPoint(center.x-2, center.y), cvPoint(center.x+2, center.y), cvScalar(255,255,255), 2);
 				cvLine(image2, cvPoint(center.x, center.y+2), cvPoint(center.x, center.y-2), cvScalar(255,255,255), 2);
-				
+
 			}else
 			{
 				if (video_data_->get_value(cpt,video_id_, point_id_,visu_point))
 				{
 					cvLine(image2, cvPoint(visu_point.x-2, visu_point.y), cvPoint(visu_point.x+2, visu_point.y), cvScalar(255,255,255), 2);
 					cvLine(image2, cvPoint(visu_point.x, visu_point.y+2), cvPoint(visu_point.x, visu_point.y-2), cvScalar(255,255,255), 2);
-				}					
+				}
 			}
-			cvPutText(image2, tmp.c_str(), cvPoint(25, 25), &font, white);
+			cvPutText(image2, tmp.toStdString().c_str(), cvPoint(25, 25), &font, white);
 			cvShowImage( "MoGS_video_tracking", image2);
 			key = cvWaitKey(1000./fps);
 		}
@@ -147,14 +147,14 @@ int video_extractor::edit_data(const std::string& point)
 					initialBB[1] = Pt2.y;
 					initialBB[3] = Pt1.y - Pt2.y;
 				}
-				
+
 				cv::Mat grey(image->height, image->width, CV_8UC1);
 				cvtColor(cv::cvarrToMat(image), grey, CV_BGR2GRAY);
 
 				tld->detectorCascade->imgWidth = grey.cols;
 				tld->detectorCascade->imgHeight = grey.rows;
 				tld->detectorCascade->imgWidthStep = grey.step;
-				
+
 				Rect bb = tldArrayToRect(initialBB);
 				printf("Starting at %d %d %d %d\n", bb.x, bb.y, bb.width, bb.height);
 				tld->selectObject(grey, &bb);
@@ -171,7 +171,7 @@ int video_extractor::edit_data(const std::string& point)
 			else
 			{
 				printf("NaN NaN NaN NaN NaN\n");
-			}	
+			}
 			double threshold = 0.5;
 			if(tld->currConf >= threshold)
 			{
@@ -186,7 +186,7 @@ int video_extractor::edit_data(const std::string& point)
 					cvLine(image2, cvPoint(center.x-2, center.y-2), cvPoint(center.x+2, center.y+2), blue, 2);
 					cvLine(image2, cvPoint(center.x-2, center.y+2), cvPoint(center.x+2, center.y-2), blue, 2);
 					rect_set = true;
-				}	
+				}
 				cvShowImage( "MoGS_video_tracking", image2);
 				key = cvWaitKey(1000./fps);
 			}else
@@ -194,7 +194,7 @@ int video_extractor::edit_data(const std::string& point)
 				tld_mode = false;
 				update_image = false;
 			}
-		}	
+		}
 
 		if (rect_set && update_image)
 		{
@@ -211,7 +211,7 @@ int video_extractor::edit_data(const std::string& point)
 				tmp.source = "manual";
 			tmp.value = center;
 			video_data_->add_data(tmp);
-		}		
+		}
 		rect_set = false;
 		if (update_image)
 			cpt++;
@@ -230,11 +230,11 @@ int video_extractor::edit_data(const std::string& point)
 // 		std::cout<<"Cannot open "<< video_file_ << " !"<<std::endl;
 // 		return ;
 // 	}
-// 	
+//
 // 	image = cvQueryFrame(capture);
 // 	int nFrames = (int) cvGetCaptureProperty( capture , CV_CAP_PROP_FRAME_COUNT);
 // 	int fps = (int) cvGetCaptureProperty(capture, CV_CAP_PROP_FPS);
-// 	
+//
 // 	cvNamedWindow("MoGS_video_tracking", CV_WINDOW_AUTOSIZE);
 // 	char key;
 // 	int cpt = 1;
@@ -243,17 +243,17 @@ int video_extractor::edit_data(const std::string& point)
 // 	while(key != 'q' && key != 'Q' && cpt < nFrames) {
 // 		cpt++;
 // 		image = cvQueryFrame(capture);
-// 		
+//
 // 		for (int i=0;i<nb_points;i++)
 // 			if (video_data_->get_value(cpt,video_id_, i,visu_point))
 // 			{
 // 				cvLine(image, cvPoint(visu_point.x-2, visu_point.y), cvPoint(visu_point.x+2, visu_point.y), cvScalar(255,255,255), 2);
 // 				cvLine(image, cvPoint(visu_point.x, visu_point.y+2), cvPoint(visu_point.x, visu_point.y-2), cvScalar(255,255,255), 2);
 // 			}
-// 
+//
 // 		cvShowImage( "MoGS_video_tracking", image);
 // 		key = cvWaitKey(1000./fps);
-// 	} 
+// 	}
 // 	cvReleaseCapture(&capture);
 // 	cvDestroyWindow("MoGS_video_tracking");
 // }

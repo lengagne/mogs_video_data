@@ -22,11 +22,13 @@ endforeach()
 
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE})
 
-FIND_PACKAGE(Qt4 REQUIRED)
+### QT used for graphical interfaces strings and xml
+find_package(Qt4 REQUIRED COMPONENTS QTCORE QTGUI QTXML QtXmlPatterns)
+include(${QT_USE_FILE})
+# message("QT_USE_FILE = " ${QT_USE_FILE})
+add_definitions(${QT_DEFINITIONS})
+
 find_package( OpenCV REQUIRED )
-if (NOT MoGS_Tinyxml_FOUND)
-  FIND_PACKAGE(MoGS_Tinyxml REQUIRED)
-endif (NOT MoGS_Tinyxml_FOUND)
 
 
 add_subdirectory(3rdparty)
@@ -58,41 +60,37 @@ QT4_ADD_RESOURCES(MOGS_VIDEO_DATA_RESOURCES_RCC ${MOGS_VIDEO_DATA_RESOURCES})
 include_directories(	include
 			3rdparty/tld
 			${OpenCV_INCLUDE_DIRS}
-			${MoGS_Tinyxml_INCLUDE_DIRS}
 			${CMAKE_CURRENT_BINARY_DIR}
 			${CMAKE_CURRENT_BINARY_DIR}/..)
 
 include(${QT_USE_FILE})
-			
+
 ADD_DEFINITIONS(${QT_DEFINITIONS})
-			
+
 link_directories(	${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE}
 )
 
 message("CMAKE_CURRENT_BINARY_DIR = " ${CMAKE_CURRENT_BINARY_DIR})
 
-ADD_LIBRARY(	MoGS_Video_Data SHARED 
+ADD_LIBRARY(	mogs_Video_Data SHARED
 		${source_files_MOGS_VIDEO_DATA}
-		${MOGS_VIDEO_DATA_HEADERS_MOC} 
-		${MOGS_VIDEO_DATA_FORMS_HEADERS} 
+		${MOGS_VIDEO_DATA_HEADERS_MOC}
+		${MOGS_VIDEO_DATA_FORMS_HEADERS}
 		${MOGS_VIDEO_DATA_RESOURCES_RCC}
 )
-# 
-target_link_libraries(MoGS_Video_Data
+
+target_link_libraries(mogs_Video_Data
 			${QT_LIBRARIES}
-			${OpenCV_LIBS} 
+			${OpenCV_LIBS}
 			${OPENTLD_LIBS}
 			${CONFIGPP_LIBS}
-			${CVBLOBS_LIBS}
-			${MoGS_Tinyxml_LIBRARIES})
-			
-link_directories(${MoGS_Tinyxml_LIBRARY_DIR})
+			${CVBLOBS_LIBS})
 
-ADD_EXECUTABLE(	MoGS_video_tracking
+ADD_EXECUTABLE(	mogs_video_tracking
 		"${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp")
 
-target_link_libraries(	MoGS_video_tracking
-			MoGS_Video_Data
+target_link_libraries(	mogs_video_tracking
+			mogs_Video_Data
 )
 
 
@@ -109,18 +107,18 @@ add_definitions(${MoGS_Video_Data_FLAGS})
 
 SET(INSTALL_LIB_DIRS ${CMAKE_INSTALL_LIBDIR}/lib )
 
-install(DIRECTORY 	${CMAKE_CURRENT_SOURCE_DIR}/tools/DTD
+install(DIRECTORY 	${CMAKE_CURRENT_SOURCE_DIR}/tools/xsd
 			${CMAKE_CURRENT_SOURCE_DIR}/tools/templates
-	DESTINATION 	${CMAKE_INSTALL_LIBDIR}/share/MoGS)
+	DESTINATION 	${CMAKE_INSTALL_LIBDIR}/share/mogs2)
 
-install( TARGETS MoGS_video_tracking RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin  COMPONENT main)
+install( TARGETS mogs_video_tracking RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin  COMPONENT main)
 
 install( FILES "tools/mogs_video_completion.sh" DESTINATION /etc/bash_completion.d/)
 
-install( TARGETS MoGS_Video_Data LIBRARY DESTINATION ${INSTALL_LIB_DIRS}  COMPONENT main)
+install( TARGETS mogs_Video_Data LIBRARY DESTINATION ${INSTALL_LIB_DIRS}  COMPONENT main)
 
 	### Configure file
 configure_file(MoGS_Video_DataConfig.cmake.in "${PROJECT_BINARY_DIR}/MoGS_Video_DataConfig.cmake" @ONLY)
 
 install ( FILES "${PROJECT_BINARY_DIR}/MoGS_Video_DataConfig.cmake"
-	  DESTINATION "${INSTALL_LIB_PATH}/MoGS_Video_Data" COMPONENT dev ) 
+	  DESTINATION "${INSTALL_LIB_PATH}/MoGS_Video_Data" COMPONENT dev )
